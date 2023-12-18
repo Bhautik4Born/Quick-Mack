@@ -69,7 +69,7 @@ const About = () => {
 
   useEffect(() => {
     // Fetch the user_id from cookies or wherever you store it
-    const userIdFromCookies = 1; // Replace this with your method to get the user_id from cookies
+    const userIdFromCookies = userId; // Replace this with your method to get the user_id from cookies
 
     // Make the API call
     axios
@@ -83,7 +83,7 @@ const About = () => {
         console.error("Error fetching user details:", error);
         // Handle errors, show error message, etc.
       });
-  }, []);
+  }, [navigate]);
 
   
   return (
