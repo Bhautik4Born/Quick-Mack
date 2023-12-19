@@ -52,9 +52,13 @@ const About = () => {
     e.preventDefault();
 
     try {
+      const userId_2 = document.cookie.replace(
+        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+        "$1"
+      );
       const response = await axios.post(
         `${baseURL}/api/ProfileUpdate/updateUser`, // Fixed concatenation
-        { user_id: 1, ...formData }
+        { user_id: userId_2, ...formData }
       );
 
       // Handling API response
@@ -68,8 +72,12 @@ const About = () => {
   const [userDetails, setUserDetails] = useState(null);
 
   useEffect(() => {
+    const userId_2 = document.cookie.replace(
+      /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    );
     // Fetch the user_id from cookies or wherever you store it
-    const userIdFromCookies = userId; // Replace this with your method to get the user_id from cookies
+    const userIdFromCookies = userId_2; // Replace this with your method to get the user_id from cookies
 
     // Make the API call
     axios
