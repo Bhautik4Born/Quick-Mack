@@ -13,21 +13,138 @@ import Cookies from "js-cookie";
 import config from "./config";
 
 const Dashboard = () => {
-  const {baseURL} = config;
-
   const [userId, setUserId] = useState("");
-  const navigate = useNavigate();
+  const history = useNavigate();
 
   useEffect(() => {
-    // Retrieve userId from cookie when the component mounts
     const userIdFromCookie = Cookies.get("userId");
     if (userIdFromCookie) {
       setUserId(userIdFromCookie);
     } else {
-      // Redirect to the home page if userId is not found in cookies
-      navigate("/");
+      history.push("/");
     }
-  }, [navigate]);
+  }, [history]);
+
+  const [technology, setTechnology] = useState("");
+  const [hours, setHours] = useState("");
+  const [responseMessageTech, setResponseMessageTech] = useState("");
+
+  const handleTechSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const response = await fetch(
+        "https://quickmake.graphiglow.in/api/AddTechnology/technology",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            technology: technology,
+            hours: parseInt(hours),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      const data = await response.json();
+      setResponseMessageTech(data.message);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const [technologyId, setSelectedTechnology] = useState("");
+  const [moduleName, setModuleName] = useState("");
+  const [hoursNumber, setHoursNumber] = useState("");
+  const [prize, setPrize] = useState("");
+  const [responseMessageModule, setResponseMessageModule] = useState("");
+  // const [technologyId, setSelectedTechnology] = useState("");
+
+  const handleSelectChange = (event) => {
+    setSelectedTechnology(event.target.value);
+  };
+  const [technologies, setTechnologies] = useState([]);
+
+  const handleModuleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const userId = document.cookie.replace(
+        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+        "$1"
+      );
+      const response = await fetch(
+        "https://quickmake.graphiglow.in/api/AddModule/module",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+         
+
+          body: JSON.stringify({
+            user_id: userId,
+            technology_id: technologyId,
+            module: moduleName,
+            hours_number: parseInt(hoursNumber),
+            prize: parseInt(prize),
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      const data = await response.json();
+      setResponseMessageModule(data.message);
+
+      if (data.message === "Data stored successfully!") {
+        history.push("/Dashboard");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    const fetchTechnologies = async () => {
+      try {
+        const userId = document.cookie.replace(
+          /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+          "$1"
+        );
+
+        const response = await fetch(
+          "https://quickmake.graphiglow.in/api/UserTechnologies/getUserTechnologies",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_id: userId,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Network response was not ok.");
+        }
+
+        const data = await response.json();
+        setTechnologies(data.data);
+      } catch (error) {
+        console.error("Error fetching technologies:", error);
+      }
+    };
+
+    fetchTechnologies();
+  }, []);
+
   return (
     <div>
       {<Sidebar />}
@@ -102,39 +219,45 @@ const Dashboard = () => {
                     </div>
                     <div className="modal-body">
                       <div className="user-details">
-                        <form>
+                        <form onSubmit={handleTechSubmit}>
                           <div className="form-floating mb-4 mt-2">
                             <input
                               type="text"
                               className="form-control"
-                              id="floatingInput"
-                              placeholder="name@example.com"
+                              id="technologyInput"
+                              placeholder="Technology"
+                              value={technology}
+                              onChange={(e) => setTechnology(e.target.value)}
                             />
-                            <label for="floatingInput">Technology</label>
+                            <label htmlFor="technologyInput">Technology</label>
                           </div>
                           <div className="form-floating mb-4">
                             <input
                               type="text"
                               className="form-control"
-                              id="floatingInput"
-                              placeholder="name@example.com"
+                              id="hoursInput"
+                              placeholder="Per Hours Rate"
+                              value={hours}
+                              name="hours"
+                              onChange={(e) => setHours(e.target.value)}
                             />
-                            <label for="floatingInput">Per Hours Rate</label>
+                            <label htmlFor="hoursInput">Per Hours Rate</label>
                           </div>
                           <div className="upload-reset-btn mb-0 justify-content-center pt-2">
-                            <button
-                              className="btn btn-upload"
-                              data-bs-dismiss="modal"
-                            >
+                            <button className="btn btn-upload" type="submit">
                               Save changes
                             </button>
                             <button
                               className="btn btn-reset me-0"
-                              data-bs-dismiss="modal"
+                              type="button"
                             >
                               Cancel
                             </button>
                           </div>
+
+                          {/* Display response message */}
+                          {responseMessageTech && <p>{responseMessageTech}</p>}
+
                         </form>
                       </div>
                     </div>
@@ -186,63 +309,74 @@ const Dashboard = () => {
                     </div>
                     <div className="modal-body">
                       <div className="user-details">
-                        <form>
+                        <form onSubmit={handleModuleSubmit}>
                           <div className="form-floating mb-4 mt-2">
-                            <select
-                              className="form-select form-control"
-                              id="floatingSelectGrid"
-                              aria-label="Floating label select example"
-                            >
-                              <option selected>Select Technology</option>
-                              <option value="1">Select Technology</option>
-                              <option value="2">Select Technology</option>
-                              <option value="3">Select Technology</option>
-                            </select>
-                            <label for="floatingSelectGrid">
-                              Select Technology
-                            </label>
+                          <select
+                                className="form-select form-control"
+                                id="floatingSelectGrid"
+                                aria-label="Floating label select example"
+                                name="technology"
+                                value={technologyId}
+                                onChange={handleSelectChange}
+                              >
+                                <option value="">Select Technology</option>
+                                {technologies.map((tech) => (
+                                  <option key={tech.id} value={tech.id}>
+                                    {tech.technology}
+                                  </option>
+                                ))}
+                              </select>
+                              <label htmlFor="floatingSelectGrid">
+                                Select Technology
+                              </label>
                           </div>
                           <div className="form-floating mb-4">
                             <input
                               type="text"
                               className="form-control"
-                              id="floatingInput"
-                              placeholder="name@example.com"
+                              id="moduleNameInput"
+                              placeholder="Module"
+                              value={moduleName}
+                              onChange={(e) => setModuleName(e.target.value)}
                             />
-                            <label for="floatingInput">Module</label>
+                            <label htmlFor="moduleNameInput">Module</label>
                           </div>
                           <div className="form-floating mb-4">
                             <input
                               type="number"
                               className="form-control"
-                              id="floatingInput"
-                              placeholder="name@example.com"
+                              id="hoursInput"
+                              placeholder="No of hours"
+                              value={hoursNumber}
+                              onChange={(e) => setHoursNumber(e.target.value)}
                             />
-                            <label for="floatingInput">No of hours</label>
+                            <label htmlFor="hoursInput">No of hours</label>
                           </div>
                           <div className="form-floating mb-4">
                             <input
                               type="number"
                               className="form-control"
-                              id="floatingInput"
-                              placeholder="name@example.com"
+                              id="prizeInput"
+                              placeholder="Prize"
+                              value={prize}
+                              onChange={(e) => setPrize(e.target.value)}
                             />
-                            <label for="floatingInput">Prize</label>
+                            <label htmlFor="prizeInput">Prize</label>
                           </div>
                           <div className="upload-reset-btn mb-0 justify-content-center pt-2">
-                            <button
-                              className="btn btn-upload"
-                              data-bs-dismiss="modal"
-                            >
+                            <button className="btn btn-upload" type="submit">
                               Save changes
                             </button>
                             <button
                               className="btn btn-reset me-0"
-                              data-bs-dismiss="modal"
+                              type="button"
                             >
                               Cancel
                             </button>
                           </div>
+
+                          {/* Display response message */}
+                          {responseMessageModule && <p>{responseMessageModule}</p>}
                         </form>
                       </div>
                     </div>

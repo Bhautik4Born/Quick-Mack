@@ -53,6 +53,7 @@ const Membership = () => {
       if (response.data.message === "Data stored successfully!") {
         // Redirect to a different page upon successful registration
         //   window.location.href = "/"; // Redirect to home page
+        window.location.href = "/Technology"; // Redirect to home page
       }
       setApiResponse(response.data.message);
     } catch (error) {
