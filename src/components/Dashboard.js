@@ -13,6 +13,7 @@ import Cookies from "js-cookie";
 import config from "./config";
 
 const Dashboard = () => {
+  const { baseURL } = config;
   const [userId, setUserId] = useState("");
   const history = useNavigate();
 
@@ -33,7 +34,7 @@ const Dashboard = () => {
     event.preventDefault();
     try {
       const response = await fetch(
-        "https://quickmake.graphiglow.in/api/AddTechnology/technology",
+        `${baseURL}api/AddTechnology/technology`,
         {
           method: "POST",
           headers: {
@@ -78,7 +79,7 @@ const Dashboard = () => {
         "$1"
       );
       const response = await fetch(
-        "https://quickmake.graphiglow.in/api/AddModule/module",
+        `${baseURL}api/AddModule/module`,
         {
           method: "POST",
           headers: {
@@ -119,7 +120,7 @@ const Dashboard = () => {
         );
 
         const response = await fetch(
-          "https://quickmake.graphiglow.in/api/UserTechnologies/getUserTechnologies",
+          `${baseURL}api/UserTechnologies/getUserTechnologies`,
           {
             method: "POST",
             headers: {

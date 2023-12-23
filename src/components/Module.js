@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
+import config from "./config";  
 
 const Module = () => {
+    const { baseURL } = config;
   const [technologies, setTechnologies] = useState([]);
   const [selectedTechnology, setSelectedTechnology] = useState("");
   const [moduleName, setModuleName] = useState("");
@@ -20,7 +22,7 @@ const Module = () => {
         );
 
         const response = await fetch(
-          "https://quickmake.graphiglow.in/api/UserTechnologies/getUserTechnologies",
+          `${baseURL}api/UserTechnologies/getUserTechnologies`,
           {
             method: "POST",
             headers: {
@@ -58,7 +60,7 @@ const Module = () => {
         "$1"
       );
       const response = await fetch(
-        "https://quickmake.graphiglow.in/api/AddModule/module",
+        `${baseURL}api/AddModule/module`,
         {
           method: "POST",
           headers: {
@@ -103,7 +105,7 @@ const Module = () => {
         const userId = user_Id; // Replace with your user ID retrieval logic
 
         const response = await fetch(
-          "https://quickmake.graphiglow.in/api/UserModle/getUserModule",
+          `${baseURL}api/UserModle/getUserModule`,
           {
             method: "POST",
             headers: {
@@ -132,7 +134,7 @@ const Module = () => {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        "https://quickmake.graphiglow.in/api/DeleteModule/deleteModule",
+        `${baseURL}api/DeleteModule/deleteModule`,
         {
           method: "POST",
           headers: {

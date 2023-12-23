@@ -73,7 +73,7 @@ const Membership = () => {
           "$1"
         );
         const response = await fetch(
-          "https://quickmake.graphiglow.in/api/UserTechnologies/getUserTechnologies",
+          `${baseURL}api/UserTechnologies/getUserTechnologies`,
           {
             method: "POST",
             headers: {
@@ -102,7 +102,7 @@ const Membership = () => {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
-        "https://quickmake.graphiglow.in/api/DeleteTechnology/deleteTechnology",
+        `${baseURL}api/DeleteTechnology/deleteTechnology`,
         {
           method: "POST",
           headers: {
