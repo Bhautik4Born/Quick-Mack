@@ -57,7 +57,7 @@ const About = () => {
         "$1"
       );
       const response = await axios.post(
-        `${baseURL}/api/ProfileUpdate/updateUser`, // Fixed concatenation
+        `${baseURL}api/ProfileUpdate/updateUser`, // Fixed concatenation
         { user_id: userId_2, ...formData }
       );
 
@@ -265,7 +265,7 @@ const About = () => {
 
                     {userDetails ? (
                     <div className="form-floating lable-col col-md-6 mb-4">
-                      <select
+                      <input
                         className="form-select form-control"
                         id="floatingSelectGrid"
                         aria-label="Floating label select example"
@@ -273,11 +273,11 @@ const About = () => {
                         onChange={handleChange}
                         defaultValue={userDetails.country}
                       >
-                        <option selected>USA</option>
+                        {/* <option selected>USA</option>
                         <option value="1">USA</option>
                         <option value="2">USA</option>
-                        <option value="3">USA</option>
-                      </select>
+                        <option value="3">USA</option> */}
+                      </input>
                       <label for="floatingSelectGrid">Country</label>
                     </div>
                     ) : (
@@ -296,8 +296,8 @@ const About = () => {
                       >
                         <option selected>English</option>
                         <option value="1">English</option>
-                        <option value="2">English</option>
-                        <option value="3">English</option>
+                        <option value="2">Hindi</option>
+                        <option value="3">Gujrati</option>
                       </select>
                       <label for="floatingSelectGrid">Language</label>
                     </div>
@@ -342,10 +342,10 @@ const About = () => {
                         onChange={handleChange}
                         defaultValue={userDetails.currency}
                       >
-                        <option selected>USD</option>
-                        <option value="1">USD</option>
+                        {/* <option selected>USD</option> */}
+                        <option selected value="1">INR</option>
                         <option value="2">USD</option>
-                        <option value="3">USD</option>
+                        {/* <option value="3">USD</option> */}
                       </select>
                       <label for="floatingSelectGrid">Currency</label>
                     </div>
