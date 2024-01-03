@@ -3,15 +3,84 @@ import { Link , useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import axios from "axios";
+import config from "./config";  
 
 const CreateProject = () => {
+  const { baseURL } = config;
   const [activeLinks, setActiveLinks] = useState([]);
   const [conferenceData, setConferenceData] = useState([]);
+  const[client_name,setClient_name]=useState([]);
+  const[project_name,setProject_name]=useState([]);
+  const [responseMessage, setResponseMessage] = useState("");
 
   const userId = document.cookie.replace(
     /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
     "$1"
   );
+  // const windowlocation = new Ob(window.location.search);
+
+  const projectId = "id"; // Replace this with your actual project ID
+
+  const queryParameters = new URLSearchParams(window.location.search);
+  const retrievedProjectId = queryParameters.get("projectId");
+  console.log(retrievedProjectId);
+
+
+  // const name = queryParameters.get("name")
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    try {
+      const userId_2 = document.cookie.replace(
+        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+        "$1"
+      );
+      const response = await fetch(
+        `${baseURL}api/AddProject/project`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId_2,
+            client_name: client_name,
+            project_name: project_name,
+            module_id: '000',
+          }),
+        }
+      );
+  
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+      
+      const queryParameters = new URLSearchParams(window.location.search);
+      const retrievedProjectId = queryParameters.get("projectId");
+      console.log(retrievedProjectId);
+  
+      const data = await response.json();
+      if (data.message === "Data stored successfully!") {
+        window.location.href = `/CreateProject/?projectId=${data.project_id}`; // Redirect to CreateProject page with project ID
+        console.log("Registration Redirect Success");
+      } else {
+        console.log("Registration Error");
+      }
+      setResponseMessage(data.project_id);
+  
+      setResponseMessage(data.message);
+  
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  
+  const handleclient = (event) => {
+    setClient_name(event.target.value);
+  };
+  const handleproject = (event) => {
+    setProject_name(event.target.value);
+  };
+  
 
   const handleLinkClick = (tech) => {
     console.log("Clicked:", tech);
@@ -169,11 +238,10 @@ const CreateProject = () => {
                             <form method="POST" action="https://quickmake.graphiglow.in/API/ModuleProject.php">
                               <input type="hidden" name="user_id" value={userId}></input>
                               <input type="hidden" name="module_id" value={data.id}></input>
-                              <input type="text" name="project_id" value={10}></input>
+                              <input type="hidden" name="project_id" value={retrievedProjectId}></input>
                               <br></br><br></br>
                               <button>+++</button>
                             </form>
-                            
                             <input
                               className="form-check-input"
                               type="checkbox"
@@ -215,6 +283,7 @@ const CreateProject = () => {
             </div>
             <div className="col-8 mb-24">
               <div className="bg-box-new h-auto">
+                 <form onSubmit={handleSubmit}>
                 <div className="search-project quotation my-1">
                   <h5 className="me-2">Quotation :</h5>
                   <div className="form-floating small-floating me-2">
@@ -223,6 +292,8 @@ const CreateProject = () => {
                       className="form-control py-2"
                       id="floatingInput"
                       placeholder="name@example.com"
+                      value={client_name}
+                      onChange={handleclient}
                     />
                     <label for="floatingInput">Clint Name</label>
                   </div>
@@ -232,6 +303,8 @@ const CreateProject = () => {
                       className="form-control py-2"
                       id="floatingInput"
                       placeholder="name@example.com"
+                      value={project_name}      
+                      onChange={handleproject}
                     />
                     <label for="floatingInput">Project Name</label>
                   </div>
@@ -248,6 +321,7 @@ const CreateProject = () => {
                       id="flexSwitchCheckDefault"
                     />
                   </div>
+                
                 </div>
                 <table className="table tablee mt-3 table-scroll small-first-col">
                   <thead>
@@ -312,344 +386,7 @@ const CreateProject = () => {
                         </div>
                       </td>
                     </tr>
-                    <tr>
-                      <th scope="row">5</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">6</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">7</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">8</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">9</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">10</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">4</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">5</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">6</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">7</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">8</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">9</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">10</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">4</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">5</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">6</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">7</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">8</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">9</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">10</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
+       
                   </tbody>
                   <tfoot>
                     <tr className="last-tr-project">
@@ -667,6 +404,9 @@ const CreateProject = () => {
                     </tr>
                   </tfoot>
                 </table>
+                <button className="save-next">Save & Next</button>
+                </form>
+                {responseMessage && <p>{responseMessage}</p>}
               </div>
             </div>
           </div>
