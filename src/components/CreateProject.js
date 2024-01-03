@@ -25,6 +25,20 @@ const CreateProject = () => {
   const retrievedProjectId = queryParameters.get("projectId");
   console.log(retrievedProjectId);
 
+  const buttonStyle = {
+    border:'none',
+    color: '#FFF',
+    fontSize: '14px',
+    fontWeight: 500,
+    letterSpacing: '0.4px',
+    textTransform: 'uppercase',
+    padding: '11px',
+    borderRadius: '6px',
+    background: '#F7A51B',
+    boxShadow: '0px 1px 5px 0px rgba(50, 71, 92, 0.02), 0px 2px 2px 0px rgba(50, 71, 92, 0.04), 0px 3px 1px -2px rgba(50, 71, 92, 0.06)'
+  };
+  
+  
 
   // const name = queryParameters.get("name")
   const handleSubmit = async (event) => {
@@ -118,6 +132,39 @@ const CreateProject = () => {
   }, []); // Empty dependency array ensures this effect runs only once
 
   const { productID } = useParams(); // Assuming 'productID' is the parameter name
+
+
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('https://quickmake.graphiglow.in/api/ProjectModule/project', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            user_id: '2',
+            project_id: '2',
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Network response was not ok.');
+        }
+
+        const responseData = await response.json();
+        setData(responseData.data);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Handle error: Set state, show an error message, etc.
+      }
+    };
+
+    fetchData();
+  }, []); // Runs once on component mount
+
 
   return (
     <div>
@@ -334,60 +381,24 @@ const CreateProject = () => {
                     </tr>
                   </thead>
                   <tbody className="all-project-table body-half-screen">
-                    <tr>
-                      <th scope="row">1</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">2</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">3</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th scope="row">4</th>
-                      <td>Login</td>
-                      <td>5</td>
-                      <td>$ 50</td>
-                      <td>
-                        <div className="icon-up-del justify-content-center">
-                          <Link to={"#"}>
-                            <i className="fa-solid fa-trash me-0"></i>
-                          </Link>
-                        </div>
-                      </td>
-                    </tr>
-       
-                  </tbody>
+        {data.map((item, index) => (
+          item.module_details.map((detail, detailIndex) => (
+            <tr key={`${item.id}-${detailIndex}`}>
+              <th scope="row">{index + 1}</th>
+              <td>{detail.module}</td>
+              <td>{detail.hours_number}</td>
+              <td>$ {detail.prize}</td>
+              <td>
+                <div className="icon-up-del justify-content-center">
+                  <Link to="#">
+                    <i className="fa-solid fa-trash me-0"></i>
+                  </Link>
+                </div>
+              </td>
+            </tr>
+          ))
+        ))}
+      </tbody>
                   <tfoot>
                     <tr className="last-tr-project">
                       <th></th>
@@ -398,13 +409,15 @@ const CreateProject = () => {
                       <td>$ 5000</td>
                       <td>
                         <div className="save-next">
-                          <Link to={"#"}>Save & next</Link>
+                          {/* <Link to={"#"}>Save & Next </Link> */}
+                          <button style={buttonStyle}>Save & Next</button>
+
                         </div>
                       </td>
                     </tr>
                   </tfoot>
                 </table>
-                <button className="save-next">Save & Next</button>
+            
                 </form>
                 {responseMessage && <p>{responseMessage}</p>}
               </div>
