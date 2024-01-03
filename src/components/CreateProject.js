@@ -59,7 +59,7 @@ const CreateProject = () => {
             user_id: userId_2,
             client_name: client_name,
             project_name: project_name,
-            module_id: '000',
+            module_id: '0',
           }),
         }
       );
@@ -137,16 +137,27 @@ const CreateProject = () => {
   const [data, setData] = useState([]);
 
   useEffect(() => {
+
+
+
     const fetchData = async () => {
       try {
+        const userId_2 = document.cookie.replace(
+          /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+          "$1"
+        );
+        const queryParameters = new URLSearchParams(window.location.search);
+        const retrievedProjectId = queryParameters.get("projectId");
+        console.log(retrievedProjectId);
+
         const response = await fetch('https://quickmake.graphiglow.in/api/ProjectModule/project', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            user_id: '2',
-            project_id: '2',
+            user_id: userId_2,
+            project_id: retrievedProjectId,
           }),
         });
 
@@ -381,24 +392,46 @@ const CreateProject = () => {
                     </tr>
                   </thead>
                   <tbody className="all-project-table body-half-screen">
-        {data.map((item, index) => (
-          item.module_details.map((detail, detailIndex) => (
-            <tr key={`${item.id}-${detailIndex}`}>
-              <th scope="row">{index + 1}</th>
-              <td>{detail.module}</td>
-              <td>{detail.hours_number}</td>
-              <td>$ {detail.prize}</td>
-              <td>
-                <div className="icon-up-del justify-content-center">
-                  <Link to="#">
-                    <i className="fa-solid fa-trash me-0"></i>
-                  </Link>
-                </div>
-              </td>
+  {data && data.length > 0 ? (
+    data.map((item, index) => (
+      <React.Fragment key={`data-row-${index}`}>
+        {item.project_id === '0' ? (
+          <tr key={`no-data-${index}`}>
+            <td colSpan="5">No data found</td>
+          </tr>
+        ) : (
+          item.module_details && item.module_details.length > 0 ? (
+            item.module_details.map((detail, detailIndex) => (
+              <tr key={`${item.id}-${detailIndex}`}>
+                <th scope="row">{index + 1}</th>
+                <td>{detail && detail.module ? detail.module : 'Not found data'}</td>
+                <td>{detail && detail.hours_number ? detail.hours_number : ''}</td>
+                <td>$ {detail && detail.prize ? detail.prize : ''}</td>
+                <td>
+                  <div className="icon-up-del justify-content-center">
+                    <Link to="#">
+                      <i className="fa-solid fa-trash me-0"></i>
+                    </Link>
+                  </div>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr key={`no-details-${index}`}>
+              <td colSpan="5">No module details found</td>
             </tr>
           ))
-        ))}
-      </tbody>
+        }
+      </React.Fragment>
+    ))
+  ) : (
+    <tr>
+      <td colSpan="5">No data available</td>
+    </tr>
+  )}
+</tbody>
+
+
                   <tfoot>
                     <tr className="last-tr-project">
                       <th></th>
