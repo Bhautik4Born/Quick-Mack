@@ -337,7 +337,7 @@ const About = () => {
                           aria-label="Floating label select example"
                           name="currency"
                           onChange={handleChange}
-                          defaultValue={userDetails.currency}
+                          value={userDetails.currency}
                         >
                           {/* <option selected>USD</option> */}
                           <option selected value="1">
