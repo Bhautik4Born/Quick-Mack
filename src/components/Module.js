@@ -49,6 +49,7 @@ const Module = () => {
   }, []);
 
   const handleSelectChange = (event) => {
+     event.preventDefault();
     setSelectedTechnology(event.target.value);
   };
 
@@ -84,6 +85,7 @@ const Module = () => {
       if (response.message === "Data stored successfully!") {
         // Redirect to a different page upon successful registration
         // window.location.href = "/"; // Redirect to home page
+        
         window.location.href = "/Module"; // Redirect to Technology page
       }
       setResponseMessage(data.message);
@@ -131,31 +133,37 @@ const Module = () => {
 
   const [deleteResponse, setDeleteResponse] = useState(null);
 
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(
-        `${baseURL}api/DeleteModule/deleteModule`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ module_id: id }),
-        }
-      );
+//delete the recod alrt
 
-      if (response.ok) {
-        const data = await response.json();
-        setDeleteResponse(data); // Store API response for display or further use
-        window.location.href = "/Module"; // Redirect to home page
-      } else {
-        throw new Error("Failed to delete Module");
+
+
+const handleDelete = async (id) => {
+  try {
+    const response = await fetch(
+      `${baseURL}api/DeleteModule/deleteModule`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ module_id: id }),
       }
-    } catch (error) {
-      console.error("Error deleting Module:", error.message);
-      // Handle error scenarios
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      setDeleteResponse(data); // Store API response for display or further use
+      alert("Module Deleted");
+      window.location.href = "/Module"; // Redirect to home page
+    } else {
+      throw new Error("Failed to delete Module");
     }
-  };
+  } catch (error) {
+    console.error("Error deleting Module:", error.message);
+    // Handle error scenarios
+  }
+};
+  
 
   return (
     <div>

@@ -54,6 +54,7 @@ const Membership = () => {
       if (response.data.message === "Data stored successfully!") {
         // Redirect to a different page upon successful registration
         //   window.location.href = "/"; // Redirect to home page
+        alert("add successful");
         window.location.href = "/Technology"; // Redirect to home page
       }
       setApiResponse(response.data.message);
@@ -116,6 +117,7 @@ const Membership = () => {
       if (response.ok) {
         const data = await response.json();
         setDeleteResponse(data); // Store API response for display or further use
+        alert("ARE YOU SURE DELETE..!")
         window.location.href = "/Technology"; // Redirect to home page
       } else {
         throw new Error("Failed to delete technology");

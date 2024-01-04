@@ -1,5 +1,5 @@
-import React, { useEffect , useState } from "react";
-import { Link , useLocation , useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import logo from "../logo.svg";
 import axios from "axios";
@@ -8,48 +8,56 @@ import config from "./config";
 
 
 const Signin = () => {
-  const {baseURL} = config;
+  const { baseURL } = config;
   const location = useLocation();
   const [userId, setUserId] = useState('');
   const navigate = useNavigate();
   useEffect(() => {
-      // Retrieve userId from cookie when the component mounts
-      const userIdFromCookie = Cookies.get('userId');
-      if (userIdFromCookie) {
-        setUserId(userIdFromCookie);
-        // Redirect to Dashboard if userId is found in cookies
-        navigate('/Dashboard');
-      }
-    }, [location.pathname, navigate]);
+    // Retrieve userId from cookie when the component mounts
+    const userIdFromCookie = Cookies.get('userId');
+    if (userIdFromCookie) {
+      setUserId(userIdFromCookie);
+      // Redirect to Dashboard if userId is found in cookies
+      navigate('/Dashboard');
+    }
+  }, [location.pathname, navigate]);
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [apiResponse, setApiResponse] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [apiResponse, setApiResponse] = useState("");
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-      try {
-        const response = await axios.post(
-          `${baseURL}api/login/login`,
-          {
-            email: email,
-            password: password,
-          }
-        );
-
-        if (response.data.message === "Login successful") {
-          Cookies.set('userId', response.data.userId, { expires: 7 }); // Set userId in cookies, expires in 7 days
-          window.location.href = "/Dashboard"; // Redirect to home page
+    try {
+      const response = await axios.post(
+        `${baseURL}api/login/login`,
+        {
+          email: email,
+          password: password,
         }
+      );
 
-        setApiResponse(response.data.message);
-
-      } catch (error) {
-        console.error("Error:", error);
-        setApiResponse("Error occurred during login");
+      if (response.data.message === "Login successful") {
+        Cookies.set('userId', response.data.userId, { expires: 7 }); // Set userId in cookies, expires in 7 days
+        window.location.href = "/Dashboard"; // Redirect to home page
       }
-    };
+
+      setApiResponse(response.data.message);
+
+    } catch (error) {
+      console.error("Error:", error);
+      setApiResponse("Error occurred during login");
+    }
+  };
+  useEffect(() => {
+    if (apiResponse === "Login successful") {
+      alert("Login successful");
+      navigate('/Dashboard');
+    } else if (apiResponse === "Please enter valid credentials") {
+      alert("Please enter valid credentials");
+    }
+  }, [apiResponse, navigate])
 
   return (
     <div>
