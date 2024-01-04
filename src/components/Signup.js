@@ -1,25 +1,24 @@
-import React, { useEffect , useState } from "react";
-import { Link , useLocation , useNavigate} from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import logo from "../logo.svg";
 import axios from "axios";
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 import config from "./config";
 
 const Signup = () => {
   const { baseURL } = config;
   const location = useLocation();
-  const [userId, setUserId] = useState('');
+  const [userId, setUserId] = useState("");
   const navigate = useNavigate();
   useEffect(() => {
-      // Retrieve userId from cookie when the component mounts
-      const userIdFromCookie = Cookies.get('userId');
-      if (userIdFromCookie) {
-        setUserId(userIdFromCookie);
-        // Redirect to Dashboard if userId is found in cookies
-        navigate('/Dashboard');
-      }
-    }, [location.pathname, navigate]);
-
+    // Retrieve userId from cookie when the component mounts
+    const userIdFromCookie = Cookies.get("userId");
+    if (userIdFromCookie) {
+      setUserId(userIdFromCookie);
+      // Redirect to Dashboard if userId is found in cookies
+      navigate("/Dashboard");
+    }
+  }, [location.pathname, navigate]);
 
   const [formData, setFormData] = useState({
     username: "",
@@ -48,22 +47,29 @@ const Signup = () => {
       );
       if (response.data.message === "User registered successfully") {
         // Redirect to a different page upon successful registration
-        alert("Signup Successfully...!")
+        alert("Signup Successfully...!");
         window.location.href = "/"; // Redirect to home page
       } else if (response.data.message === "All fields are required") {
         alert("All fields are required");
       } else if (response.data.message === "Enter the valid user name ") {
         alert("Enter the valid user name");
-      }  else if (response.data.message === "Username  already registered") {
+      } else if (response.data.message === "Username  already registered") {
         alert("Please enter valid Username");
-      }else if (response.data.message === "Email or mobile number already registered") {
+      } else if (
+        response.data.message === "Email or mobile number already registered"
+      ) {
         alert("Email or mobile number already registered");
-      }  else if (response.data.message === "Password must contain at least 8 characters with at least one special character, one uppercase letter, and one number.") {
-        alert("Password must contain at least 8 characters with at least one special character, one uppercase letter, and one number");
-      }else if (response.data.message === "PASSWORD already registered.") {
-        alert("PASSWORD already registered.")
+      } else if (
+        response.data.message ===
+        "Password must contain at least 8 characters with at least one special character, one uppercase letter, and one number."
+      ) {
+        alert(
+          "Password must contain at least 8 characters with at least one special character, one uppercase letter, and one number"
+        );
+      } else if (response.data.message === "PASSWORD already registered.") {
+        alert("PASSWORD already registered.");
       }
-  
+
       setApiResponse(response.data.message);
     } catch (error) {
       console.error("Error:", error);
@@ -114,8 +120,8 @@ const Signup = () => {
                     id="mobileNumber"
                     name="mobileNumber"
                     placeholder="name@example.com"
-                    minLength={10} 
-                    maxLength={10} 
+                    minLength={10}
+                    maxLength={10}
                     value={formData.mobileNumber}
                     onChange={handleChange}
                     required

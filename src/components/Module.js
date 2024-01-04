@@ -49,7 +49,7 @@ const Module = () => {
   }, []);
 
   const handleSelectChange = (event) => {
-     event.preventDefault();
+    event.preventDefault();
     setSelectedTechnology(event.target.value);
   };
 
@@ -60,22 +60,19 @@ const Module = () => {
         /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
         "$1"
       );
-      const response = await fetch(
-        `${baseURL}api/AddModule/module`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            user_id: userId_2,
-            technology_id: selectedTechnology,
-            module: moduleName,
-            hours_number: parseInt(hoursNumber),
-            prize: parseInt(prize),
-          }),
-        }
-      );
+      const response = await fetch(`${baseURL}api/AddModule/module`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId_2,
+          technology_id: selectedTechnology,
+          module: moduleName,
+          hours_number: parseInt(hoursNumber),
+          prize: parseInt(prize),
+        }),
+      });
 
       if (!response.ok) {
         throw new Error("Network response was not ok.");
@@ -85,11 +82,10 @@ const Module = () => {
       if (response.message === "Data stored successfully!") {
         // Redirect to a different page upon successful registration
         // window.location.href = "/"; // Redirect to home page
-        
+
         window.location.href = "/Module"; // Redirect to Technology page
       }
       setResponseMessage(data.message);
-
     } catch (error) {
       console.error("Error:", error);
     }
@@ -106,16 +102,13 @@ const Module = () => {
         );
         const userId = user_Id; // Replace with your user ID retrieval logic
 
-        const response = await fetch(
-          `${baseURL}api/UserModle/getUserModule`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ user_id: userId }),
-          }
-        );
+        const response = await fetch(`${baseURL}api/UserModle/getUserModule`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
 
         if (!response.ok) {
           throw new Error("Failed to fetch data");
@@ -133,37 +126,31 @@ const Module = () => {
 
   const [deleteResponse, setDeleteResponse] = useState(null);
 
-//delete the recod alrt
+  //delete the recod alrt
 
-
-
-const handleDelete = async (id) => {
-  try {
-    const response = await fetch(
-      `${baseURL}api/DeleteModule/deleteModule`,
-      {
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(`${baseURL}api/DeleteModule/deleteModule`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ module_id: id }),
-      }
-    );
+      });
 
-    if (response.ok) {
-      const data = await response.json();
-      setDeleteResponse(data); // Store API response for display or further use
-      alert("Module Deleted");
-      window.location.href = "/Module"; // Redirect to home page
-    } else {
-      throw new Error("Failed to delete Module");
+      if (response.ok) {
+        const data = await response.json();
+        setDeleteResponse(data); // Store API response for display or further use
+        alert("Module Deleted");
+        window.location.href = "/Module"; // Redirect to home page
+      } else {
+        throw new Error("Failed to delete Module");
+      }
+    } catch (error) {
+      console.error("Error deleting Module:", error.message);
+      // Handle error scenarios
     }
-  } catch (error) {
-    console.error("Error deleting Module:", error.message);
-    // Handle error scenarios
-  }
-};
-  
+  };
 
   return (
     <div>
@@ -229,7 +216,6 @@ const handleDelete = async (id) => {
                               <label htmlFor="floatingSelectGrid">
                                 Select Technology
                               </label>
-
                             </div>
                             <div className="form-floating mb-4">
                               <input
@@ -523,7 +509,6 @@ const handleDelete = async (id) => {
                       </tr>
                     )}
                   </tbody>
-
                 </table>
                 <div className="pro-add-new px-0 mb-0 pt-3">
                   <p>1 - 6 of 6</p>

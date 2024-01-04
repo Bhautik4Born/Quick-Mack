@@ -279,7 +279,10 @@ const CreateProject = () => {
                 <div>
                   {conferenceData && Array.isArray(conferenceData) ? (
                     conferenceData.map((data) => (
-                      <div className="video-conference h-auto mb-10" key={data.id}>
+                      <div
+                        className="video-conference h-auto mb-10"
+                        key={data.id}
+                      >
                         <div className="project-one p-0 mt-0 bg-transparent">
                           <div className="project-photo-discription">
                             <div className="form-check plus-check">
@@ -331,7 +334,11 @@ const CreateProject = () => {
                               <p key={techName}>
                                 <a
                                   href="#"
-                                  className={activeLinks.includes(techName) ? "active" : ""}
+                                  className={
+                                    activeLinks.includes(techName)
+                                      ? "active"
+                                      : ""
+                                  }
                                   onClick={() => handleLinkClick(techName)}
                                 >
                                   {techName}
@@ -349,7 +356,6 @@ const CreateProject = () => {
                   )}
                 </div>
               </div>
-
             </div>
             <div className="col-8 mb-24">
               <div className="bg-box-new h-auto">

@@ -117,7 +117,7 @@ const Membership = () => {
       if (response.ok) {
         const data = await response.json();
         setDeleteResponse(data); // Store API response for display or further use
-        alert("ARE YOU SURE DELETE..!")
+        alert("ARE YOU SURE DELETE..!");
         window.location.href = "/Technology"; // Redirect to home page
       } else {
         throw new Error("Failed to delete technology");
@@ -333,7 +333,9 @@ const Membership = () => {
                               {deleteResponse && (
                                 <div>
                                   <p>API Response:</p>
-                                  <pre>{JSON.stringify(deleteResponse, null, 2)}</pre>
+                                  <pre>
+                                    {JSON.stringify(deleteResponse, null, 2)}
+                                  </pre>
                                 </div>
                               )}
                             </div>
@@ -342,11 +344,12 @@ const Membership = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="4" style={{ textAlign: "center"}}>No data Technology </td>
+                        <td colSpan="4" style={{ textAlign: "center" }}>
+                          No data Technology{" "}
+                        </td>
                       </tr>
                     )}
                   </tbody>
-
                 </table>
                 <div className="pro-add-new px-0 mb-0 pt-3">
                   <p>1 - 6 of 6</p>

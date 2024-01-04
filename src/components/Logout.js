@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
-import Cookies from 'js-cookie';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from "react";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const Logout = () => {
   const navigate = useNavigate();
@@ -12,7 +12,7 @@ const Logout = () => {
     });
 
     // Redirect to the home page after logging out
-    navigate('/');
+    navigate("/");
   }, [navigate]); // Include navigate in the dependency array to prevent useEffect from raising a warning
 
   // You can render something here if needed, like a message

@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import Chart from 'react-apexcharts';
+import React, { Component } from "react";
+import Chart from "react-apexcharts";
 
 class Piechart extends Component {
   constructor(props) {
@@ -7,8 +7,8 @@ class Piechart extends Component {
 
     this.state = {
       options: {
-        labels: ['A', 'B', 'C', 'D'],
-        colors: ['#71dd37', '#c256fa', '#8592a3', '#03c3ec'],
+        labels: ["A", "B", "C", "D"],
+        colors: ["#71dd37", "#c256fa", "#8592a3", "#03c3ec"],
         plotOptions: {
           pie: {
             donut: {
@@ -16,22 +16,22 @@ class Piechart extends Component {
                 show: true,
                 name: {
                   show: true,
-                  fontSize: '14px',
+                  fontSize: "14px",
                   fontWeight: 600,
                   color: undefined,
                 },
                 value: {
                   show: true,
-                  fontSize: '25px',
+                  fontSize: "25px",
                   fontWeight: 700,
-                  color: 'rgba(50, 71, 92, 0.87)',
+                  color: "rgba(50, 71, 92, 0.87)",
                   offsetY: 16,
                 },
                 total: {
                   show: true,
-                  label: 'Hours',
-                  color: 'rgba(50, 71, 92, 0.38)',
-                  fontSize: '18px',
+                  label: "Hours",
+                  color: "rgba(50, 71, 92, 0.38)",
+                  fontSize: "18px",
                   fontWeight: 300,
                   formatter: function (w) {
                     return w.globals.seriesTotals.reduce((a, b) => {
@@ -54,7 +54,7 @@ class Piechart extends Component {
                 width: 300,
               },
               legend: {
-                position: 'bottom',
+                position: "bottom",
               },
             },
           },
@@ -67,7 +67,12 @@ class Piechart extends Component {
   render() {
     return (
       <div className="donut">
-        <Chart options={this.state.options} series={this.state.series} type="donut" width="100%" />
+        <Chart
+          options={this.state.options}
+          series={this.state.series}
+          type="donut"
+          width="100%"
+        />
       </div>
     );
   }

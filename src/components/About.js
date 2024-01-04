@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link , useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import user from "../Image/user.png";
@@ -81,7 +81,7 @@ const About = () => {
 
     // Make the API call
     axios
-    .post(`${baseURL}api/UserDetail/getUserByID`, {
+      .post(`${baseURL}api/UserDetail/getUserByID`, {
         user_id: userIdFromCookies,
       })
       .then((response) => {
@@ -93,7 +93,6 @@ const About = () => {
       });
   }, [navigate]);
 
-  
   return (
     <div>
       {<Sidebar />}
@@ -122,7 +121,7 @@ const About = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="user-details">
                   <form className="row" onSubmit={handleSubmit}>
                     {userDetails ? (
@@ -142,213 +141,213 @@ const About = () => {
                     ) : (
                       <p></p>
                     )}
-                  {userDetails ? (
-
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="floatingInput"
-                        placeholder="name@example.com"
-                        name="last_name"
-                        onChange={handleChange}
-                        defaultValue={userDetails.last_name}
-
-                      />
-                      <label for="floatingInput">Last Name</label>
-                    </div>
+                    {userDetails ? (
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="floatingInput"
+                          placeholder="name@example.com"
+                          name="last_name"
+                          onChange={handleChange}
+                          defaultValue={userDetails.last_name}
+                        />
+                        <label for="floatingInput">Last Name</label>
+                      </div>
                     ) : (
                       <p></p>
                     )}
 
                     {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <input
-                        type="email"
-                        className="form-control"
-                        id="floatingInput"
-                        placeholder="name@example.com"
-                        name="email"
-                        onChange={handleChange}
-                        defaultValue={userDetails.email}
-                      />
-                      <label for="floatingInput">E-mail</label>
-                    </div>
-                    ) : (
-                      <p></p>
-                    )}
-
-                  {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="floatingInput"
-                        placeholder="name@example.com"
-                        name="organizations"
-                        onChange={handleChange}
-                        defaultValue={userDetails.organizations}
-                      />
-                      <label for="floatingInput">Organization</label>
-                    </div>
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <input
+                          type="email"
+                          className="form-control"
+                          id="floatingInput"
+                          placeholder="name@example.com"
+                          name="email"
+                          onChange={handleChange}
+                          defaultValue={userDetails.email}
+                        />
+                        <label for="floatingInput">E-mail</label>
+                      </div>
                     ) : (
                       <p></p>
                     )}
 
                     {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="floatingInput"
-                        placeholder="name@example.com"
-                        name="mobile_number"
-                        onChange={handleChange}
-                        defaultValue={userDetails.mobile_number}
-                      />
-                      <label for="floatingInput">Phone Number</label>
-                    </div>
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="floatingInput"
+                          placeholder="name@example.com"
+                          name="organizations"
+                          onChange={handleChange}
+                          defaultValue={userDetails.organizations}
+                        />
+                        <label for="floatingInput">Organization</label>
+                      </div>
                     ) : (
                       <p></p>
                     )}
 
                     {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="floatingInput"
-                        placeholder="name@example.com"
-                        name="address"
-                        onChange={handleChange}
-                        defaultValue={userDetails.address}
-                      />
-                      <label for="floatingInput">Address</label>
-                    </div>
-                    ) : (
-                      <p></p>
-                    )}
-
-                  {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <input
-                        type="text"
-                        className="form-control"
-                        id="floatingInput"
-                        placeholder="name@example.com"
-                        name="state"
-                        onChange={handleChange}
-                        defaultValue={userDetails.state}
-                      />
-                      <label for="floatingInput">State</label>
-                    </div>
-                    ) : (
-                      <p></p>
-                    )}
-
-                  {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <input
-                        type="number"
-                        className="form-control"
-                        id="floatingInput"
-                        placeholder="name@example.com"
-                        name="zip"
-                        onChange={handleChange}
-                        defaultValue={userDetails.zip}
-                      />
-                      <label for="floatingInput">Zip Code</label>
-                    </div>
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="floatingInput"
+                          placeholder="name@example.com"
+                          name="mobile_number"
+                          onChange={handleChange}
+                          defaultValue={userDetails.mobile_number}
+                        />
+                        <label for="floatingInput">Phone Number</label>
+                      </div>
                     ) : (
                       <p></p>
                     )}
 
                     {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <input
-                        className="form-select form-control"
-                        id="floatingSelectGrid"
-                        aria-label="Floating label select example"
-                        name="country"
-                        onChange={handleChange}
-                        defaultValue={userDetails.country}
-                      >
-                        {/* <option selected>USA</option>
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="floatingInput"
+                          placeholder="name@example.com"
+                          name="address"
+                          onChange={handleChange}
+                          defaultValue={userDetails.address}
+                        />
+                        <label for="floatingInput">Address</label>
+                      </div>
+                    ) : (
+                      <p></p>
+                    )}
+
+                    {userDetails ? (
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <input
+                          type="text"
+                          className="form-control"
+                          id="floatingInput"
+                          placeholder="name@example.com"
+                          name="state"
+                          onChange={handleChange}
+                          defaultValue={userDetails.state}
+                        />
+                        <label for="floatingInput">State</label>
+                      </div>
+                    ) : (
+                      <p></p>
+                    )}
+
+                    {userDetails ? (
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <input
+                          type="number"
+                          className="form-control"
+                          id="floatingInput"
+                          placeholder="name@example.com"
+                          name="zip"
+                          onChange={handleChange}
+                          defaultValue={userDetails.zip}
+                        />
+                        <label for="floatingInput">Zip Code</label>
+                      </div>
+                    ) : (
+                      <p></p>
+                    )}
+
+                    {userDetails ? (
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <input
+                          className="form-select form-control"
+                          id="floatingSelectGrid"
+                          aria-label="Floating label select example"
+                          name="country"
+                          onChange={handleChange}
+                          defaultValue={userDetails.country}
+                        >
+                          {/* <option selected>USA</option>
                         <option value="1">USA</option>
                         <option value="2">USA</option>
                         <option value="3">USA</option> */}
-                      </input>
-                      <label for="floatingSelectGrid">Country</label>
-                    </div>
+                        </input>
+                        <label for="floatingSelectGrid">Country</label>
+                      </div>
                     ) : (
                       <p></p>
                     )}
 
                     {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <select
-                        className="form-select form-control"
-                        id="floatingSelectGrid"
-                        aria-label="Floating label select example"
-                        name="language"
-                        onChange={handleChange}
-                        defaultValue={userDetails.language}
-                      >
-                        <option selected>English</option>
-                        <option value="1">English</option>
-                        <option value="2">Hindi</option>
-                        <option value="3">Gujrati</option>
-                      </select>
-                      <label for="floatingSelectGrid">Language</label>
-                    </div>
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <select
+                          className="form-select form-control"
+                          id="floatingSelectGrid"
+                          aria-label="Floating label select example"
+                          name="language"
+                          onChange={handleChange}
+                          defaultValue={userDetails.language}
+                        >
+                          <option selected>English</option>
+                          <option value="1">English</option>
+                          <option value="2">Hindi</option>
+                          <option value="3">Gujrati</option>
+                        </select>
+                        <label for="floatingSelectGrid">Language</label>
+                      </div>
                     ) : (
                       <p></p>
                     )}
                     {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <select
-                        className="form-select form-control"
-                        id="floatingSelectGrid"
-                        aria-label="Floating label select example"
-                        name="timezone"
-                        onChange={handleChange}
-                        defaultValue={userDetails.timezone}
-                      >
-                        <option selected>
-                          (GMT-11:00) International Date Line West
-                        </option>
-                        <option value="1">
-                          (GMT-11:00) International Date Line West
-                        </option>
-                        <option value="2">
-                          (GMT-11:00) International Date Line West
-                        </option>
-                        <option value="3">
-                          (GMT-11:00) International Date Line West
-                        </option>
-                      </select>
-                      <label for="floatingSelectGrid">Timezone</label>
-                    </div>
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <select
+                          className="form-select form-control"
+                          id="floatingSelectGrid"
+                          aria-label="Floating label select example"
+                          name="timezone"
+                          onChange={handleChange}
+                          defaultValue={userDetails.timezone}
+                        >
+                          <option selected>
+                            (GMT-11:00) International Date Line West
+                          </option>
+                          <option value="1">
+                            (GMT-11:00) International Date Line West
+                          </option>
+                          <option value="2">
+                            (GMT-11:00) International Date Line West
+                          </option>
+                          <option value="3">
+                            (GMT-11:00) International Date Line West
+                          </option>
+                        </select>
+                        <label for="floatingSelectGrid">Timezone</label>
+                      </div>
                     ) : (
                       <p></p>
                     )}
                     {userDetails ? (
-                    <div className="form-floating lable-col col-md-6 mb-4">
-                      <select
-                        className="form-select form-control"
-                        id="floatingSelectGrid"
-                        aria-label="Floating label select example"
-                        name="currency"
-                        onChange={handleChange}
-                        defaultValue={userDetails.currency}
-                      >
-                        {/* <option selected>USD</option> */}
-                        <option selected value="1">INR</option>
-                        <option value="2">USD</option>
-                        {/* <option value="3">USD</option> */}
-                      </select>
-                      <label for="floatingSelectGrid">Currency</label>
-                    </div>
+                      <div className="form-floating lable-col col-md-6 mb-4">
+                        <select
+                          className="form-select form-control"
+                          id="floatingSelectGrid"
+                          aria-label="Floating label select example"
+                          name="currency"
+                          onChange={handleChange}
+                          defaultValue={userDetails.currency}
+                        >
+                          {/* <option selected>USD</option> */}
+                          <option selected value="1">
+                            INR
+                          </option>
+                          <option value="2">USD</option>
+                          {/* <option value="3">USD</option> */}
+                        </select>
+                        <label for="floatingSelectGrid">Currency</label>
+                      </div>
                     ) : (
                       <p></p>
                     )}
