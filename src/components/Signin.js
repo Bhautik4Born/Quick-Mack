@@ -25,6 +25,8 @@ const Signin = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [apiResponse, setApiResponse] = useState("");
+  const [messageColor, setMessageColor] = useState('red'); // State to determine message color
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,26 +40,41 @@ const Signin = () => {
         }
       );
 
-      if (response.data.message === "Login successful") {
-        Cookies.set('userId', response.data.userId, { expires: 7 }); // Set userId in cookies, expires in 7 days
-        window.location.href = "/Dashboard"; // Redirect to home page
+      if (response.data.message === 'Login successful') {
+        Cookies.set('userId', response.data.userId, { expires: 7 });
+        // Redirect to home page or change route here if using React Router
+        window.location.href = '/Dashboard';
+        setMessageColor('green'); // Change message color to green on success
+        setApiResponse('Login successful');
       }
 
       setApiResponse(response.data.message);
 
     } catch (error) {
       console.error("Error:", error);
+      alert("Please enter valid credentials");
       setApiResponse("Error occurred during login");
+       const buttonStyle = {
+          color: "green",
+        };
     }
   };
   useEffect(() => {
     if (apiResponse === "Login successful") {
       alert("Login successful");
       navigate('/Dashboard');
-    } else if (apiResponse === "Please enter valid credentials") {
+    } else if (apiResponse === "Email not registered Please register..") {
+      alert("Email not registered. Please register..");
+    }else if (apiResponse === "Please enter valid credentials") {
       alert("Please enter valid credentials");
+    }else if (apiResponse === "Email and password are required") {
+      alert("Email and password are required");
+    } else if (apiResponse === "Invalid password. Please enter a valid password.") {
+      alert("Invalid password. Please enter a valid password.");
     }
+   
   }, [apiResponse, navigate])
+
 
   return (
     <div>
@@ -109,7 +126,8 @@ const Signin = () => {
                 <button type="submit" className="btn btn-login">
                   Sign in
                 </button>
-                <p style={{ color: "red" }}>{apiResponse}</p>
+                {/* <p style={{ color: "red" }}>{apiResponse}</p> */}
+                <p style={{ color: messageColor }}>{apiResponse}</p>
               </form>
               <div className="create-acc">
                 <p>

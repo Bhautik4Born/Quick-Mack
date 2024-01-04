@@ -48,8 +48,22 @@ const Signup = () => {
       );
       if (response.data.message === "User registered successfully") {
         // Redirect to a different page upon successful registration
+        alert("Signup Successfully...!")
         window.location.href = "/"; // Redirect to home page
+      } else if (response.data.message === "All fields are required") {
+        alert("All fields are required");
+      } else if (response.data.message === "Enter the valid user name ") {
+        alert("Enter the valid user name");
+      }  else if (response.data.message === "Username  already registered") {
+        alert("Please enter valid Username");
+      }else if (response.data.message === "Email or mobile number already registered") {
+        alert("Email or mobile number already registered");
+      }  else if (response.data.message === "Password must contain at least 8 characters with at least one special character, one uppercase letter, and one number.") {
+        alert("Password must contain at least 8 characters with at least one special character, one uppercase letter, and one number");
+      }else if (response.data.message === "PASSWORD already registered.") {
+        alert("PASSWORD already registered.")
       }
+  
       setApiResponse(response.data.message);
     } catch (error) {
       console.error("Error:", error);
@@ -76,6 +90,7 @@ const Signup = () => {
                     placeholder="Username"
                     value={formData.username}
                     onChange={handleChange}
+                    required
                   />
                   <label htmlFor="username">Username</label>
                 </div>
@@ -88,6 +103,7 @@ const Signup = () => {
                     placeholder="name@example.com"
                     value={formData.email}
                     onChange={handleChange}
+                    required
                   />
                   <label htmlFor="email">Email</label>
                 </div>
@@ -98,8 +114,11 @@ const Signup = () => {
                     id="mobileNumber"
                     name="mobileNumber"
                     placeholder="name@example.com"
+                    minLength={10} 
+                    maxLength={10} 
                     value={formData.mobileNumber}
                     onChange={handleChange}
+                    required
                   />
                   <label htmlFor="mobileNumber">Mobile Number</label>
                 </div>
@@ -112,6 +131,7 @@ const Signup = () => {
                     placeholder="Password"
                     value={formData.password}
                     onChange={handleChange}
+                    required
                   />
                   <label htmlFor="password">Password</label>
                 </div>
