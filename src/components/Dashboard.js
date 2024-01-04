@@ -33,25 +33,29 @@ const Dashboard = () => {
   const handleTechSubmit = async (event) => {
     event.preventDefault();
     try {
-      const response = await fetch(`${baseURL}api/AddTechnology/technology`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          technology: technology,
-          hours: parseInt(hours),
-        }),
-      });
-
+      const response = await fetch(
+        `${baseURL}api/AddTechnology/technology`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId,
+            technology: technology,
+            hours: parseInt(hours),
+          }),
+        }
+      );
+      
       const response1 = await response.json();
       setResponseMessageModule(response1.message);
 
       if (response1.message === "Data stored successfully!") {
         alert("Add Technology Successfully..!");
-        window.location.href = "/Dashboard";
+        window.location.href=("/Dashboard")
         history.push("/Dashboard");
+        
       }
 
       if (!response.ok) {
@@ -84,20 +88,24 @@ const Dashboard = () => {
         /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
         "$1"
       );
-      const response = await fetch(`${baseURL}api/AddModule/module`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+      const response = await fetch(
+        `${baseURL}api/AddModule/module`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
 
-        body: JSON.stringify({
-          user_id: userId,
-          technology_id: technologyId,
-          module: moduleName,
-          hours_number: parseInt(hoursNumber),
-          prize: parseInt(prize),
-        }),
-      });
+
+          body: JSON.stringify({
+            user_id: userId,
+            technology_id: technologyId,
+            module: moduleName,
+            hours_number: parseInt(hoursNumber),
+            prize: parseInt(prize),
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Network response was not ok.");
@@ -108,8 +116,9 @@ const Dashboard = () => {
 
       if (data.message === "Data stored successfully!") {
         alert("Add Module Successfully..!");
-        window.location.href = "/Dashboard";
+        window.location.href=("/Dashboard")
         history.push("/Dashboard");
+        
       }
     } catch (error) {
       console.error("Error:", error);
@@ -138,6 +147,7 @@ const Dashboard = () => {
 
         if (!response.ok) {
           throw new Error("Network response was not ok.");
+       
         }
 
         const data = await response.json();
@@ -264,6 +274,7 @@ const Dashboard = () => {
 
                           {/* Display response message */}
                           {/* {responseMessageTech && <p>{responseMessageTech}</p>} */}
+
                         </form>
                       </div>
                     </div>
@@ -314,6 +325,7 @@ const Dashboard = () => {
                       ></button>
                     </div>
                     <div className="modal-body">
+
                       <div className="user-details">
                         <form onSubmit={handleModuleSubmit}>
                           <div className="form-floating mb-4 mt-2">
@@ -326,8 +338,7 @@ const Dashboard = () => {
                               onChange={handleSelectChange}
                             >
                               <option value="">Select Technology</option>
-                              {Array.isArray(technologies) &&
-                              technologies.length > 0 ? (
+                              {Array.isArray(technologies) && technologies.length > 0 ? (
                                 technologies.map((tech) => (
                                   <option key={tech.id} value={tech.id}>
                                     {tech.technology}
@@ -339,6 +350,7 @@ const Dashboard = () => {
                                 </option>
                               )}
                             </select>
+
 
                             <label htmlFor="floatingSelectGrid">
                               Select Technology
@@ -393,9 +405,7 @@ const Dashboard = () => {
                           </div>
 
                           {/* Display response message */}
-                          {responseMessageModule && (
-                            <p>{responseMessageModule}</p>
-                          )}
+                          {responseMessageModule && <p>{responseMessageModule}</p>}
                         </form>
                       </div>
                     </div>
@@ -655,5 +665,4 @@ const Dashboard = () => {
     </div>
   );
 };
-
 export default Dashboard;
