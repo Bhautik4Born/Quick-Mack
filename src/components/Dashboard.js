@@ -47,6 +47,16 @@ const Dashboard = () => {
           }),
         }
       );
+      
+      const response1 = await response.json();
+      setResponseMessageModule(response1.message);
+
+      if (response1.message === "Data stored successfully!") {
+        alert("Add Technology Successfully..!");
+        window.location.href=("/Dashboard")
+        history.push("/Dashboard");
+        
+      }
 
       if (!response.ok) {
         throw new Error("Network response was not ok.");
@@ -105,7 +115,10 @@ const Dashboard = () => {
       setResponseMessageModule(data.message);
 
       if (data.message === "Data stored successfully!") {
+        alert("Add Module Successfully..!");
+        window.location.href=("/Dashboard")
         history.push("/Dashboard");
+        
       }
     } catch (error) {
       console.error("Error:", error);
@@ -134,6 +147,7 @@ const Dashboard = () => {
 
         if (!response.ok) {
           throw new Error("Network response was not ok.");
+       
         }
 
         const data = await response.json();
@@ -229,6 +243,7 @@ const Dashboard = () => {
                               placeholder="Technology"
                               value={technology}
                               onChange={(e) => setTechnology(e.target.value)}
+                              required
                             />
                             <label htmlFor="technologyInput">Technology</label>
                           </div>
@@ -241,6 +256,7 @@ const Dashboard = () => {
                               value={hours}
                               name="hours"
                               onChange={(e) => setHours(e.target.value)}
+                              required
                             />
                             <label htmlFor="hoursInput">Per Hours Rate</label>
                           </div>
@@ -257,7 +273,7 @@ const Dashboard = () => {
                           </div>
 
                           {/* Display response message */}
-                          {responseMessageTech && <p>{responseMessageTech}</p>}
+                          {/* {responseMessageTech && <p>{responseMessageTech}</p>} */}
 
                         </form>
                       </div>
@@ -309,6 +325,7 @@ const Dashboard = () => {
                       ></button>
                     </div>
                     <div className="modal-body">
+
                       <div className="user-details">
                         <form onSubmit={handleModuleSubmit}>
                           <div className="form-floating mb-4 mt-2">
@@ -347,6 +364,7 @@ const Dashboard = () => {
                               placeholder="Module"
                               value={moduleName}
                               onChange={(e) => setModuleName(e.target.value)}
+                              required
                             />
                             <label htmlFor="moduleNameInput">Module</label>
                           </div>
@@ -358,6 +376,7 @@ const Dashboard = () => {
                               placeholder="No of hours"
                               value={hoursNumber}
                               onChange={(e) => setHoursNumber(e.target.value)}
+                              required
                             />
                             <label htmlFor="hoursInput">No of hours</label>
                           </div>
@@ -369,6 +388,7 @@ const Dashboard = () => {
                               placeholder="Prize"
                               value={prize}
                               onChange={(e) => setPrize(e.target.value)}
+                              required
                             />
                             <label htmlFor="prizeInput">Prize</label>
                           </div>
@@ -433,6 +453,7 @@ const Dashboard = () => {
                         className="form-control"
                         id="floatingInput"
                         placeholder="name@example.com"
+                        required
                       />
                       <label for="floatingInput">Search Project</label>
                     </div>
