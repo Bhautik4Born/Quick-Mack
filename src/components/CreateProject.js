@@ -277,75 +277,79 @@ const CreateProject = () => {
               </div>
               <div className="all-project-table all-project-plus p-1">
                 <div>
-                  {conferenceData.map((data) => (
-                    <div
-                      className="video-conference h-auto mb-10"
-                      key={data.id}
-                    >
-                      <div className="project-one p-0 mt-0 bg-transparent">
-                        <div className="project-photo-discription">
-                          <div className="form-check plus-check">
-                            <form
-                              method="POST"
-                              action="https://quickmake.graphiglow.in/API/ModuleProject.php"
-                            >
+                  {conferenceData && Array.isArray(conferenceData) ? (
+                    conferenceData.map((data) => (
+                      <div className="video-conference h-auto mb-10" key={data.id}>
+                        <div className="project-one p-0 mt-0 bg-transparent">
+                          <div className="project-photo-discription">
+                            <div className="form-check plus-check">
+                              <form
+                                method="POST"
+                                action="https://quickmake.graphiglow.in/API/ModuleProject.php"
+                              >
+                                <input
+                                  type="hidden"
+                                  name="user_id"
+                                  value={userId}
+                                ></input>
+                                <input
+                                  type="hidden"
+                                  name="module_id"
+                                  value={data.id}
+                                ></input>
+                                <input
+                                  type="hidden"
+                                  name="project_id"
+                                  value={retrievedProjectId}
+                                ></input>
+                                <br></br>
+                                <br></br>
+                                <button>+++</button>
+                              </form>
                               <input
-                                type="hidden"
-                                name="user_id"
-                                value={userId}
-                              ></input>
-                              <input
-                                type="hidden"
-                                name="module_id"
-                                value={data.id}
-                              ></input>
-                              <input
-                                type="hidden"
-                                name="project_id"
-                                value={retrievedProjectId}
-                              ></input>
-                              <br></br>
-                              <br></br>
-                              <button>+++</button>
-                            </form>
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id={`flexCheckChecked${data.id}`}
-                            />
-                            <label
-                              className="form-check-label video-font-size"
-                              htmlFor={`flexCheckChecked${data.id}`}
-                            >
-                              <b>{data.module}</b>
-                            </label>
+                                className="form-check-input"
+                                type="checkbox"
+                                value=""
+                                id={`flexCheckChecked${data.id}`}
+                              />
+                              <label
+                                className="form-check-label video-font-size"
+                                htmlFor={`flexCheckChecked${data.id}`}
+                              >
+                                <b>{data.module}</b>
+                              </label>
+                            </div>
+                          </div>
+                          <div className="price-hours">
+                            <h3>${data.prize}</h3>
+                            <h4>{data.hours_number}</h4>
                           </div>
                         </div>
-                        <div className="price-hours">
-                          <h3>${data.prize}</h3>
-                          <h4>{data.hours_number}</h4>
+                        <div className="five-tech" style={{ flexWrap: "wrap" }}>
+                          {data && Array.isArray(data.technology_names) ? (
+                            data.technology_names.map((techName) => (
+                              <p key={techName}>
+                                <a
+                                  href="#"
+                                  className={activeLinks.includes(techName) ? "active" : ""}
+                                  onClick={() => handleLinkClick(techName)}
+                                >
+                                  {techName}
+                                </a>
+                              </p>
+                            ))
+                          ) : (
+                            <p>No technology names available</p>
+                          )}
                         </div>
                       </div>
-                      <div className="five-tech" style={{ flexWrap: "wrap" }}>
-                        {data.technology_names.map((techName) => (
-                          <p key={techName}>
-                            <a
-                              href="#"
-                              className={
-                                activeLinks.includes(techName) ? "active" : ""
-                              }
-                              onClick={() => handleLinkClick(techName)}
-                            >
-                              {techName}
-                            </a>
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <p>No conference data available</p>
+                  )}
                 </div>
               </div>
+
             </div>
             <div className="col-8 mb-24">
               <div className="bg-box-new h-auto">

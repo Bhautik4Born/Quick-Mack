@@ -1,4 +1,4 @@
-import React, { useEffect, useState , map} from "react";
+import React, { useEffect, useState, map } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
@@ -85,7 +85,7 @@ const Dashboard = () => {
           headers: {
             "Content-Type": "application/json",
           },
-         
+
 
           body: JSON.stringify({
             user_id: userId,
@@ -312,24 +312,32 @@ const Dashboard = () => {
                       <div className="user-details">
                         <form onSubmit={handleModuleSubmit}>
                           <div className="form-floating mb-4 mt-2">
-                          <select
-                                className="form-select form-control"
-                                id="floatingSelectGrid"
-                                aria-label="Floating label select example"
-                                name="technology"
-                                value={technologyId}
-                                onChange={handleSelectChange}
-                              >
-                                <option value="">Select Technology</option>
-                                {technologies.map((tech) => (
+                            <select
+                              className="form-select form-control"
+                              id="floatingSelectGrid"
+                              aria-label="Floating label select example"
+                              name="technology"
+                              value={technologyId}
+                              onChange={handleSelectChange}
+                            >
+                              <option value="">Select Technology</option>
+                              {Array.isArray(technologies) && technologies.length > 0 ? (
+                                technologies.map((tech) => (
                                   <option key={tech.id} value={tech.id}>
                                     {tech.technology}
                                   </option>
-                                ))}
-                              </select>
-                              <label htmlFor="floatingSelectGrid">
-                                Select Technology
-                              </label>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  No Module Available
+                                </option>
+                              )}
+                            </select>
+
+
+                            <label htmlFor="floatingSelectGrid">
+                              Select Technology
+                            </label>
                           </div>
                           <div className="form-floating mb-4">
                             <input

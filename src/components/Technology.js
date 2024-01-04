@@ -9,6 +9,7 @@ import config from "./config";
 const Membership = () => {
   const { baseURL } = config;
   const location = useLocation();
+
   const [userId, setUserId] = useState("");
   const navigate = useNavigate();
   // useEffect(() => {
@@ -301,47 +302,49 @@ const Membership = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {technologies.map((tech) => (
-                      <tr key={tech.id}>
-                        <td>{tech.sequence_number}</td>
-                        <td>{tech.technology}</td>
-                        <td>{tech.hourse}</td>
-                        <td>
-                          <div className="icon-up-del">
-                            <Link
-                              type="button"
-                              to={{
-                                pathname: `/edit/${tech.id}`,
-                                state: { id: tech.id },
-                              }}
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModaledit"
-                            >
-                              <i className="fa-solid fa-pen"></i>
-                            </Link>
-                            {/* <Link to={{ pathname: `/${tech.id}` }}>
-                            <i className="fa-solid fa-trash"></i>
-                          </Link> */}
-                            <Link
-                              to={{ pathname: `/${tech.id}` }}
-                              onClick={() => handleDelete(tech.id)}
-                              type="button"
-                            >
-                              <i className="fa-solid fa-trash"></i>
-                            </Link>
-                            {deleteResponse && (
-                              <div>
-                                <p>API Response:</p>
-                                <pre>
-                                  {JSON.stringify(deleteResponse, null, 2)}
-                                </pre>
-                              </div>
-                            )}
-                          </div>
-                        </td>
+                    {Array.isArray(technologies) && technologies.length > 0 ? (
+                      technologies.map((tech) => (
+                        <tr key={tech.id}>
+                          <td>{tech.sequence_number}</td>
+                          <td>{tech.technology}</td>
+                          <td>{tech.hourse}</td>
+                          <td>
+                            <div className="icon-up-del">
+                              <Link
+                                type="button"
+                                to={{
+                                  pathname: `/edit/${tech.id}`,
+                                  state: { id: tech.id },
+                                }}
+                                data-bs-toggle="modal"
+                                data-bs-target="#exampleModaledit"
+                              >
+                                <i className="fa-solid fa-pen"></i>
+                              </Link>
+                              <Link
+                                to={{ pathname: `/${tech.id}` }}
+                                onClick={() => handleDelete(tech.id)}
+                                type="button"
+                              >
+                                <i className="fa-solid fa-trash"></i>
+                              </Link>
+                              {deleteResponse && (
+                                <div>
+                                  <p>API Response:</p>
+                                  <pre>{JSON.stringify(deleteResponse, null, 2)}</pre>
+                                </div>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="4" style={{ textAlign: "center"}}>No data Technology </td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
+
                 </table>
                 <div className="pro-add-new px-0 mb-0 pt-3">
                   <p>1 - 6 of 6</p>

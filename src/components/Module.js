@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
-import config from "./config";  
+import config from "./config";
 
 const Module = () => {
-    const { baseURL } = config;
+  const { baseURL } = config;
   const [technologies, setTechnologies] = useState([]);
   const [selectedTechnology, setSelectedTechnology] = useState("");
   const [moduleName, setModuleName] = useState("");
@@ -82,11 +82,11 @@ const Module = () => {
 
       const data = await response.json();
       if (response.message === "Data stored successfully!") {
-          // Redirect to a different page upon successful registration
-          // window.location.href = "/"; // Redirect to home page
-          window.location.href = "/Module"; // Redirect to Technology page
-        }
-        setResponseMessage(data.message);
+        // Redirect to a different page upon successful registration
+        // window.location.href = "/"; // Redirect to home page
+        window.location.href = "/Module"; // Redirect to Technology page
+      }
+      setResponseMessage(data.message);
 
     } catch (error) {
       console.error("Error:", error);
@@ -99,9 +99,9 @@ const Module = () => {
     const fetchData = async () => {
       try {
         const user_Id = document.cookie.replace(
-            /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
-            "$1"
-          );
+          /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+          "$1"
+        );
         const userId = user_Id; // Replace with your user ID retrieval logic
 
         const response = await fetch(
@@ -212,7 +212,7 @@ const Module = () => {
                                 onChange={handleSelectChange}
                               >
                                 <option value="">Select Technology</option>
-                                {technologies.map((tech) => (
+                                {(technologies ?? []).map((tech) => (
                                   <option key={tech.id} value={tech.id}>
                                     {tech.technology}
                                   </option>
@@ -221,6 +221,7 @@ const Module = () => {
                               <label htmlFor="floatingSelectGrid">
                                 Select Technology
                               </label>
+
                             </div>
                             <div className="form-floating mb-4">
                               <input
@@ -480,32 +481,41 @@ const Module = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {userModules.map((module, index) => (
-                      <tr key={module.id}>
-                        <th scope="row">{index + 1}</th>
-                        <td className="td-technology">{module.module}</td>
-                        <td>{module.technology_id}</td>
-                        <td>{module.hours_number}</td>
-                        <td>$ {module.prize}</td>
-                        <td>
-                          <div className="icon-up-del">
-                            <Link
-                              type="button"
-                              data-bs-toggle="modal"
-                              data-bs-target="#exampleModaledit"
-                            >
-                              <i className="fa-solid fa-pen"></i>
-                            </Link>
-                            <Link to={{ pathname: `/${module.id}` }}
-                              onClick={() => handleDelete(module.id)}
-                              type="button">
-                              <i className="fa-solid fa-trash"></i>
-                            </Link>
-                          </div>
-                        </td>
+                    {Array.isArray(userModules) && userModules.length > 0 ? (
+                      userModules.map((module, index) => (
+                        <tr key={module.id}>
+                          <th scope="row">{index + 1}</th>
+                          <td className="td-technology">{module.module}</td>
+                          <td>{module.technology_id}</td>
+                          <td>{module.hours_number}</td>
+                          <td>$ {module.prize}</td>
+                          <td>
+                            <div className="icon-up-del">
+                              <Link
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#exampleModaledit"
+                              >
+                                <i className="fa-solid fa-pen"></i>
+                              </Link>
+                              <Link
+                                to={{ pathname: `/${module.id}` }}
+                                onClick={() => handleDelete(module.id)}
+                                type="button"
+                              >
+                                <i className="fa-solid fa-trash"></i>
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="6">No data available</td>
                       </tr>
-                    ))}
+                    )}
                   </tbody>
+
                 </table>
                 <div className="pro-add-new px-0 mb-0 pt-3">
                   <p>1 - 6 of 6</p>
