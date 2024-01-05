@@ -159,24 +159,7 @@ const Membership = () => {
                 </div>
 
                 {/* RENDERING LODING */}
-                <div>
-                  {/* Conditional rendering based on isLoading */}
-                  {isLoading ? (
-                    <p style={{ textAlign: 'center' }}>Loading...</p>
-
-                  ) : (
-                    <div>
-                      {/* Render your fetched data or component here */}
-                      {Array.isArray(technologies) && technologies.length > 0 ? (
-                        technologies.map((tech) => (
-                          <div key={tech.id}>{tech.name}</div>
-                        ))
-                      ) : (
-                        <p></p>
-                      )}
-                    </div>
-                  )}
-                </div>
+               
 
                 {/* <!-- Add Modal --> */}
                 <div
@@ -372,12 +355,33 @@ const Membership = () => {
                         </tr>
                       ))
                     ) : (
+                      
                       <tr>
                         <td colSpan="4" style={{ textAlign: "center" }}>
                         No technologies available{" "}
-                        </td>
+                        </td>  
                       </tr>
+              
                     )}
+                    <tr colSpan="6" style={{ textAlign: 'center' }}> 
+                      <div>
+                  {/* Conditional rendering based on isLoading */}
+                  {isLoading ? (
+                    <p style={{ textAlign: 'center' }}>Loading...</p>
+
+                  ) : (
+                    <div>
+                      {/* Render your fetched data or component here */}
+                      {Array.isArray(technologies) && technologies.length > 0 ? (
+                        technologies.map((tech) => (
+                          <div key={tech.id}>{tech.name}</div>
+                        ))
+                      ) : (
+                        <p></p>
+                      )}
+                    </div>
+                  )}
+                </div></tr>
                   </tbody>
                 </table>
                 <div className="pro-add-new px-0 mb-0 pt-3">
