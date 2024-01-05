@@ -167,10 +167,13 @@ const Membership = () => {
                   ) : (
                     <div>
                       {/* Render your fetched data or component here */}
-                      {technologies.map((tech) => (
-                        <div key={tech.id}>{tech.name}</div>
-                        // Render whatever content you need with the fetched data
-                      ))}
+                      {Array.isArray(technologies) && technologies.length > 0 ? (
+                        technologies.map((tech) => (
+                          <div key={tech.id}>{tech.name}</div>
+                        ))
+                      ) : (
+                        <p>No technologies available</p>
+                      )}
                     </div>
                   )}
                 </div>
