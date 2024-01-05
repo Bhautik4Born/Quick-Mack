@@ -354,7 +354,10 @@ const About = () => {
                           name="currency"
                           onChange={handleChange}
                           value={userDetails.currency}
+<<<<<<< HEAD
                           required
+=======
+>>>>>>> 107cf2224df35f0203c3e128e3daa960ffcc9090
                         >
                           {/* <option selected>USD</option> */}
                           <option selected value="1">
