@@ -491,6 +491,8 @@ const Module = () => {
                   </thead>
                   <tbody>
                     {/* RENDERING LODING */}
+                    <tr>
+                      <td colSpan="6" style={{ textAlign: 'center' }}>
                     <div>
                       {/* Conditional rendering based on isLoading */}
                       {isLoading ? (
@@ -504,12 +506,13 @@ const Module = () => {
                               <div key={tech.id}>{tech.name}</div>
                             ))
                           ) : (
-                            <p>No technologies available</p>
+                            <p style={{ textAlign: 'center' }}>No Module available</p>
                           )}
                         </div>
                       )}
                     </div>
-
+                    </td>
+                    </tr>
 
 
                     {/* LODING MODULE ADDD */}

@@ -172,7 +172,7 @@ const Membership = () => {
                           <div key={tech.id}>{tech.name}</div>
                         ))
                       ) : (
-                        <p>No technologies available</p>
+                        <p>Loding.....</p>
                       )}
                     </div>
                   )}
@@ -374,7 +374,7 @@ const Membership = () => {
                     ) : (
                       <tr>
                         <td colSpan="4" style={{ textAlign: "center" }}>
-                          Loding...{" "}
+                        No technologies available{" "}
                         </td>
                       </tr>
                     )}
