@@ -79,19 +79,24 @@ const Module = () => {
       }
 
       const data = await response.json();
-      if (response.message === "Data stored successfully!") {
-        // Redirect to a different page upon successful registration
-        // window.location.href = "/"; // Redirect to home page
-
+      if (data.message === "Data stored successfully!") {
+        // Notify the user about successful module addition
+        alert("Module added successfully!");
         window.location.href = "/Module"; // Redirect to Technology page
+      } else {
+        // Notify the user about other responses (not a successful addition)
+        alert(`Error: ${data.message}`);
       }
-      setResponseMessage(data.message);
     } catch (error) {
+      // Notify about any error occurred during the process
       console.error("Error:", error);
+      alert("An error occurred while adding the module. Please try again later.");
     }
+
   };
 
   const [userModules, setUserModules] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -118,6 +123,10 @@ const Module = () => {
         setUserModules(data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
+      }
+      finally {
+        // Move setIsLoading(false) inside the 'if' block after setting the data
+        setIsLoading(false);
       }
     };
 
@@ -273,13 +282,15 @@ const Module = () => {
                               </button>
                             </div>
                             {/* Display response message */}
-                            {responseMessage && <p>{responseMessage}</p>}
+                            {/* {responseMessage && <p>{responseMessage}</p>} */}
                           </form>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+
+
                 {/* <!--End Add Modal --> */}
                 {/* <!-- Edit Modal --> */}
                 <div
@@ -475,6 +486,28 @@ const Module = () => {
                     </tr>
                   </thead>
                   <tbody>
+                    {/* RENDERING LODING */}
+                    <div>
+                      {/* Conditional rendering based on isLoading */}
+                      {isLoading ? (
+                        <p style={{ textAlign: 'center' }}>Loading...</p>
+
+                      ) : (
+                        <div>
+                          {/* Render your fetched data or component here */}
+                          {technologies.map((tech) => (
+                            <div key={tech.id}>{tech.name}</div>
+                            // Render whatever content you need with the fetched data
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+
+
+                    {/* LODING MODULE ADDD */}
+
+
                     {Array.isArray(userModules) && userModules.length > 0 ? (
                       userModules.map((module, index) => (
                         <tr key={module.id}>
@@ -484,6 +517,7 @@ const Module = () => {
                           <td>{module.hours_number}</td>
                           <td>$ {module.prize}</td>
                           <td>
+
                             <div className="icon-up-del">
                               <Link
                                 type="button"
@@ -502,12 +536,14 @@ const Module = () => {
                             </div>
                           </td>
                         </tr>
+
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6">No data available</td>
+                        <td colSpan="6" style={{ textAlign: 'center' }}></td>
                       </tr>
                     )}
+
                   </tbody>
                 </table>
                 <div className="pro-add-new px-0 mb-0 pt-3">

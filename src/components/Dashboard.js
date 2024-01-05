@@ -327,7 +327,7 @@ const Dashboard = () => {
                             >
                               <option value="">Select Technology</option>
                               {Array.isArray(technologies) &&
-                              technologies.length > 0 ? (
+                                technologies.length > 0 ? (
                                 technologies.map((tech) => (
                                   <option key={tech.id} value={tech.id}>
                                     {tech.technology}

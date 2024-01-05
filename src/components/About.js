@@ -63,7 +63,12 @@ const About = () => {
 
       // Handling API response
       setApiResponse(response.data.message || "Unknown response");
-    } catch (error) {
+      if (response.data.message === "User details updated successfully") {
+        alert("Data Sotre SUcessfully..!");
+      }
+      else if (response.data.message === "All fields are required.") {
+        alert("OOPs Some Mistake")
+      }  } catch (error) {
       console.error("Error:", error);
       setApiResponse("Error occurred during the API call");
     }
@@ -135,6 +140,7 @@ const About = () => {
                           onChange={handleChange}
                           // value={userDetails.first_name}
                           defaultValue={userDetails.first_name}
+                          required
                         />
                         <label htmlFor="floatingInput">First Name</label>
                       </div>
@@ -151,6 +157,7 @@ const About = () => {
                           name="last_name"
                           onChange={handleChange}
                           defaultValue={userDetails.last_name}
+                          required
                         />
                         <label for="floatingInput">Last Name</label>
                       </div>
@@ -168,6 +175,7 @@ const About = () => {
                           name="email"
                           onChange={handleChange}
                           defaultValue={userDetails.email}
+                          readOnly
                         />
                         <label for="floatingInput">E-mail</label>
                       </div>
@@ -185,6 +193,7 @@ const About = () => {
                           name="organizations"
                           onChange={handleChange}
                           defaultValue={userDetails.organizations}
+                          required
                         />
                         <label for="floatingInput">Organization</label>
                       </div>
@@ -202,6 +211,7 @@ const About = () => {
                           name="mobile_number"
                           onChange={handleChange}
                           defaultValue={userDetails.mobile_number}
+                          readOnly
                         />
                         <label for="floatingInput">Phone Number</label>
                       </div>
@@ -219,6 +229,7 @@ const About = () => {
                           name="address"
                           onChange={handleChange}
                           defaultValue={userDetails.address}
+                          required
                         />
                         <label for="floatingInput">Address</label>
                       </div>
@@ -236,6 +247,7 @@ const About = () => {
                           name="state"
                           onChange={handleChange}
                           defaultValue={userDetails.state}
+                          required
                         />
                         <label for="floatingInput">State</label>
                       </div>
@@ -253,6 +265,7 @@ const About = () => {
                           name="zip"
                           onChange={handleChange}
                           defaultValue={userDetails.zip}
+                          required
                         />
                         <label for="floatingInput">Zip Code</label>
                       </div>
@@ -269,6 +282,7 @@ const About = () => {
                           name="country"
                           onChange={handleChange}
                           defaultValue={userDetails.country}
+                          required
                         >
                           {/* <option selected>USA</option>
                         <option value="1">USA</option>
@@ -290,6 +304,7 @@ const About = () => {
                           name="language"
                           onChange={handleChange}
                           defaultValue={userDetails.language}
+                          required
                         >
                           <option selected>English</option>
                           <option value="1">English</option>
@@ -310,6 +325,7 @@ const About = () => {
                           name="timezone"
                           onChange={handleChange}
                           defaultValue={userDetails.timezone}
+                          required
                         >
                           <option selected>
                             (GMT-11:00) International Date Line West
@@ -337,7 +353,8 @@ const About = () => {
                           aria-label="Floating label select example"
                           name="currency"
                           onChange={handleChange}
-                          defaultValue={userDetails.currency}
+                          value={userDetails.currency}
+                          required
                         >
                           {/* <option selected>USD</option> */}
                           <option selected value="1">

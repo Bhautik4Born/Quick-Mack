@@ -128,6 +128,7 @@ const CreateProject = () => {
   const { productID } = useParams(); // Assuming 'productID' is the parameter name
 
   const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -159,15 +160,18 @@ const CreateProject = () => {
         }
 
         const responseData = await response.json();
-        setData(responseData.data);
+        setData(responseData.data || []); // Ensure setData receives an array even if responseData.data is undefined
       } catch (error) {
         console.error("Error fetching data:", error);
         // Handle error: Set state, show an error message, etc.
+      } finally {
+        // Set isLoading to false after data fetching completes (success or error)
+        setIsLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Runs once on component mount
+  }, []);// Runs once on component mount
 
   return (
     <div>
@@ -274,6 +278,21 @@ const CreateProject = () => {
                     <label for="floatingInput">Search Module</label>
                   </div>
                 </div>
+              </div>
+              {/* LODING DATA FEATUERS */}
+              <div>
+                {isLoading ? (
+                  <p>Loading...</p>
+                ) : (
+                  <div>
+                    {/* Render your fetched data or component here */}
+                    {/* For example, iterate over 'data' */}
+                    {data.map((item) => (
+                      <div key={item.id}>{item.name}</div>
+                      // Render whatever content you need with the fetched data
+                    ))}
+                  </div>
+                )}
               </div>
               <div className="all-project-table all-project-plus p-1">
                 <div>

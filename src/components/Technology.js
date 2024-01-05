@@ -54,7 +54,7 @@ const Membership = () => {
       if (response.data.message === "Data stored successfully!") {
         // Redirect to a different page upon successful registration
         //   window.location.href = "/"; // Redirect to home page
-        alert("add successful");
+        alert("ADD Technology");
         window.location.href = "/Technology"; // Redirect to home page
       }
       setApiResponse(response.data.message);
@@ -65,9 +65,12 @@ const Membership = () => {
   };
 
   const [technologies, setTechnologies] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
 
   useEffect(() => {
-    // Fetch data from the API when the component mounts
+    // Fetch data from the API when the component mounts loding
+
     const fetchData = async () => {
       try {
         const userId = document.cookie.replace(
@@ -93,6 +96,10 @@ const Membership = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
+      }
+      finally {
+        // Move setIsLoading(false) inside the 'if' block after setting the data
+        setIsLoading(false);
       }
     };
 
@@ -126,6 +133,7 @@ const Membership = () => {
       console.error("Error deleting technology:", error.message);
       // Handle error scenarios
     }
+
   };
 
   return (
@@ -149,6 +157,24 @@ const Membership = () => {
                     <i className="fa-solid fa-plus"></i> Add New
                   </Link>
                 </div>
+
+                {/* RENDERING LODING */}
+                <div>
+                  {/* Conditional rendering based on isLoading */}
+                  {isLoading ? (
+                    <p style={{ textAlign: 'center' }}>Loading...</p>
+
+                  ) : (
+                    <div>
+                      {/* Render your fetched data or component here */}
+                      {technologies.map((tech) => (
+                        <div key={tech.id}>{tech.name}</div>
+                        // Render whatever content you need with the fetched data
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 {/* <!-- Add Modal --> */}
                 <div
                   className="modal fade"
@@ -210,7 +236,7 @@ const Membership = () => {
                                 Cancel
                               </button>
                             </div>
-                            <p style={{ color: "red" }}>{apiResponse}</p>
+                            {/* <p style={{ color: "red" }}>{apiResponse}</p> */}
                           </form>
                         </div>
                       </div>
@@ -345,7 +371,7 @@ const Membership = () => {
                     ) : (
                       <tr>
                         <td colSpan="4" style={{ textAlign: "center" }}>
-                          No data Technology{" "}
+                          Loding...{" "}
                         </td>
                       </tr>
                     )}
