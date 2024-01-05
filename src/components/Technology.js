@@ -198,7 +198,7 @@ const Membership = () => {
                             </div>
                             <div className="form-floating mb-4">
                               <input
-                                type="text"
+                                type="number"
                                 className="form-control"
                                 id="floatingInput"
                                 placeholder="name@example.com"

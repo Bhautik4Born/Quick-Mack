@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
@@ -65,10 +65,10 @@ const About = () => {
       setApiResponse(response.data.message || "Unknown response");
       if (response.data.message === "User details updated successfully") {
         alert("Data Sotre SUcessfully..!");
+      } else if (response.data.message === "All fields are required.") {
+        alert("OOPs Some Mistake");
       }
-      else if (response.data.message === "All fields are required.") {
-        alert("OOPs Some Mistake")
-      }  } catch (error) {
+    } catch (error) {
       console.error("Error:", error);
       setApiResponse("Error occurred during the API call");
     }
@@ -98,6 +98,28 @@ const About = () => {
       });
   }, [navigate]);
 
+  const [selectedImage, setSelectedImage] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+
+    // Display the selected image
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSelectedImage(reader.result);
+    };
+    reader.readAsDataURL(selectedFile);
+  };
+
+  // const handleImageRemove = () => {
+  //   // Remove the selected image and show the image input again
+  //   setSelectedImage(null);
+  // };
   return (
     <div>
       {<Sidebar />}
@@ -111,20 +133,52 @@ const About = () => {
                     <h5>Account Details</h5>
                     <p>User id is :- {userId}</p>
                   </div>
-                  <div className="upload-img">
-                    <div className="show-img">
-                      <img src={user} alt="" />
-                    </div>
-                    <div className="allowed-ext">
-                      <div className="upload-reset-btn">
-                        <button className="btn btn-upload">
-                          Upload new photo
-                        </button>
-                        <button className="btn btn-reset">Reset</button>
+                  <form>
+                    <div className="upload-img">
+                      <div className="show-img">
+                        <div style={{ display: "grid" }}>
+                          {!selectedImage && (
+                            <div>
+                              <input
+                                type="file"
+                                style={{ display: "none" }}
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                              />
+                              <img
+                                src={user}
+                                alt="User"
+                                onClick={handleImageClick}
+                                style={{ cursor: "pointer" }}
+                              />
+                            </div>
+                          )}
+
+                          {selectedImage && (
+                            <div>
+                              <img
+                                src={selectedImage}
+                                alt="Selected"
+                                style={{ maxWidth: "100%", maxHeight: "400px" }}
+                              />
+                              {/* <button onClick={handleImageRemove}>
+                                Remove Image
+                              </button> */}
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <p>Allowed JPG, GIF or PNG. Max size of 800K</p>
+                      <div className="allowed-ext">
+                        <div className="upload-reset-btn">
+                          <button className="btn btn-upload">
+                            Upload new photo
+                          </button>
+                          <button className="btn btn-reset">Reset</button>
+                        </div>
+                        <p>Allowed JPG, GIF or PNG. Max size of 800K</p>
+                      </div>
                     </div>
-                  </div>
+                  </form>
                 </div>
 
                 <div className="user-details">
@@ -374,7 +428,9 @@ const About = () => {
                     </div>
                     {apiResponse && (
                       <div className="mt-3">
-                        <p style={{ color: "red" , display:"none"}}>{apiResponse}</p>
+                        <p style={{ color: "red", display: "none" }}>
+                          {apiResponse}
+                        </p>
                       </div>
                     )}
                   </form>
