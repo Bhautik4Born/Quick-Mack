@@ -172,7 +172,7 @@ const Membership = () => {
                           <div key={tech.id}>{tech.name}</div>
                         ))
                       ) : (
-                        <p>Loding.....</p>
+                        <p></p>
                       )}
                     </div>
                   )}
