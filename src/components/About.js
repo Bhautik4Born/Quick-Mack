@@ -374,7 +374,7 @@ const About = () => {
                     </div>
                     {apiResponse && (
                       <div className="mt-3">
-                        <p style={{ color: "red" , display:"none"}}>{apiResponse}</p>
+                        <p style={{ color: "red" }}>{apiResponse}</p>
                       </div>
                     )}
                   </form>
