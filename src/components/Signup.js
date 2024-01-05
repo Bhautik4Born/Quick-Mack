@@ -144,7 +144,7 @@ const Signup = () => {
                 <button type="submit" className="btn btn-login">
                   Sign up
                 </button>
-                <p style={{ color: "red" }}>{apiResponse}</p>
+                <p style={{ color: "red" , display:"none" }}>{apiResponse}</p>
               </form>
               <div className="create-acc">
                 <p>

@@ -130,7 +130,7 @@ const Signin = () => {
                   Sign in
                 </button>
                 {/* <p style={{ color: "red" }}>{apiResponse}</p> */}
-                <p style={{ color: messageColor }}>{apiResponse}</p>
+                <p style={{ color: messageColor, display:"none"}}>{apiResponse}</p>
 
               </form>
               <div className="create-acc">
