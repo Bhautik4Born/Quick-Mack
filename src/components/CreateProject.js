@@ -171,7 +171,7 @@ const CreateProject = () => {
     };
 
     fetchData();
-  }, []);// Runs once on component mount
+  }, []); // Runs once on component mount
 
   return (
     <div>
@@ -326,35 +326,40 @@ const CreateProject = () => {
                                 ></input>
                                 <br></br>
                                 <br></br>
-                                <div className="five-tech" style={{ flexWrap: "wrap" }}>
-                          {data && Array.isArray(data.technology_names) ? (
-                            data.technology_names.map((techName) => (
-                              <p key={techName}>
-                                {/* <a
-                                  href="#"
-                                  className={
-                                    activeLinks.includes(techName)
-                                      ? "active"
-                                      : ""
-                                  }
-                                  onClick={() => handleLinkClick(techName)}
-                                > */}
-                                  
-                                <input
-                                // key={techName}
-                                  type="hidden"
-                                  name="technology_ids[]"
-                                  value={[techName]}
-                                ></input>
-                                {/* </a> */}
-                              </p>
-                            ))
-                          ) : (
-                            <p>No technology names available</p>
-                          )}
-                        </div>
-                                <button>+++</button>
+                                <div
+                                  className="five-tech"
+                                  style={{ flexWrap: "wrap" }}
+                                >
+                                  {data &&
+                                  Array.isArray(data.technology_names) ? (
+                                    data.technology_names.map((techName) =>
+                                      activeLinks.includes(techName) ? (
+                                        <p key={[techName]}>
+                                          <input
+                                            type="hidden"
+                                            name="technology_ids[]"
+                                            value={[techName]}
+                                          ></input>
+                                          <button
+                                            style={{ display: "none" }}
+                                            type="hidden"
+                                            className="active"
+                                            onClick={() =>
+                                              handleLinkClick([techName])
+                                            }
+                                          >
+                                            {[techName]}
+                                          </button>
+                                        </p>
+                                      ) : null
+                                    )
+                                  ) : (
+                                    <p>No technology names available</p>
+                                  )}
+                                </div>
+                                <button>++</button>
                               </form>
+
                               <input
                                 className="form-check-input"
                                 type="checkbox"
@@ -379,7 +384,7 @@ const CreateProject = () => {
                             data.technology_names.map((techName) => (
                               <p key={techName}>
                                 <a
-                                  href="#"
+                                  // href="#"
                                   className={
                                     activeLinks.includes(techName)
                                       ? "active"

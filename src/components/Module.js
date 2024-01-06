@@ -219,7 +219,7 @@ const Module = () => {
                                 value={selectedTechnology}
                                 onChange={handleSelectChange}
                               >
-                                <option value="">Select Technology</option>
+                                {/* <option value="">Select Technology</option> */}
                                 {technologies && technologies.map((tech) => (
                                   <option key={tech.id} value={tech.id}>
                                     {tech.technology}
