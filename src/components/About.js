@@ -115,7 +115,6 @@ const About = () => {
 
     if (!selectedFile) {
       alert("Please select an image");
-      window.location.href('/About')
       return;
     }
 
