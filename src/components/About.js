@@ -98,7 +98,7 @@ const About = () => {
       });
   }, [navigate]);
 
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const fileInputRef = useRef(null);
 
   const handleImageClick = () => {
@@ -106,23 +106,48 @@ const About = () => {
   };
 
   const handleFileChange = (e) => {
-    const selectedFile = e.target.files[0];
-
-    // Display the selected image
-    const reader = new FileReader();
-    reader.onload = () => {
-      setSelectedImage(reader.result);
-    };
-    reader.readAsDataURL(selectedFile);
+    const file = e.target.files[0];
+    setSelectedFile(file);
   };
 
-  // const handleImageRemove = () => {
-  //   // Remove the selected image and show the image input again
-  //   setSelectedImage(null);
-  // };
+  const ImageController = async (e) => {
+    e.preventDefault();
 
+    if (!selectedFile) {
+      alert("Please select an image");
+      window.location.href('/About')
+      return;
+    }
 
-  
+    // Create form data to send the image
+    const formData = new FormData();
+    const userId_2 = document.cookie.replace(
+      /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+      "$1"
+    );
+    formData.append("user_ID", userId_2); // Static user ID
+    formData.append("profileImage", selectedFile);
+
+    try {
+      const response = await fetch(
+        "https://quickmake.graphiglow.in/api/ProfileImageUpdate/updateProfileImage",
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
+
+      const data = await response.json();
+
+      // Show API response in an alert box
+      alert(data.message);
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error updating profile image");
+      window.location.href('/About')
+    }
+  };
+
   return (
     <div>
       {<Sidebar />}
@@ -134,51 +159,46 @@ const About = () => {
                 <div className="account-details">
                   <div className="about-page">
                     <h5>Account Details</h5>
-                    <p>User id is :- {userId}</p>
                   </div>
-                  <form>
+                  <form onSubmit={ImageController}>
                     <div className="upload-img">
                       <div className="show-img">
                         <div style={{ display: "grid" }}>
-                          {!selectedImage && (
-                            <div>
-                              <input
-                                type="file"
-                                style={{ display: "none" }}
-                                ref={fileInputRef}
-                                onChange={handleFileChange}
-                              />
-                              <img
-                                src={user}
-                                alt="User"
-                                onClick={handleImageClick}
-                                style={{ cursor: "pointer" }}
-                              />
-                            </div>
-                          )}
-
-                          {selectedImage && (
-                            <div>
-                              <img
-                                src={selectedImage}
-                                alt="Selected"
-                                style={{ maxWidth: "100%", maxHeight: "400px" }}
-                              />
-                              {/* <button onClick={handleImageRemove}>
-                                Remove Image
-                              </button> */}
-                            </div>
+                          <input
+                            type="file"
+                            style={{ display: "none" }}
+                            ref={fileInputRef}
+                            onChange={handleFileChange}
+                          />
+                          {userDetails ? (
+                            <img
+                              src={
+                                selectedFile
+                                  ? URL.createObjectURL(selectedFile)
+                                  : userDetails.ProfileImageURL // If selectedFile doesn't exist, use ProfileImageURL from userDetails
+                              }
+                              alt="User"
+                              onClick={handleImageClick}
+                              style={{ cursor: "pointer" }}
+                            />
+                          ) : (
+                            <p></p> // Render a message if userDetails is not available
                           )}
                         </div>
                       </div>
                       <div className="allowed-ext">
                         <div className="upload-reset-btn">
-                          <button className="btn btn-upload">
+                          <button className="btn btn-upload" type="submit">
                             Upload new photo
                           </button>
-                          <button className="btn btn-reset">Reset</button>
+                          <button
+                            className="btn btn-reset"
+                            onClick={() => setSelectedFile(null)} // Reset file on button click
+                          >
+                            Reset
+                          </button>
                         </div>
-                        <p>Allowed JPG, GIF or PNG. Max size of 800K</p>
+                        <p>Allowed JPG, GIF, or PNG. Max size of 800K</p>
                       </div>
                     </div>
                   </form>
