@@ -439,7 +439,7 @@ const CreateProject = () => {
                               item.module_details.length > 0 ? (
                               item.module_details.map((detail, detailIndex) => (
                                 <tr key={`${item.id}-${detailIndex}`}>
-                                  <th scope="row">{index + 1}</th>
+                                  <th scope="row">{detail.sequence_number}</th>
                                   <td>
                                     {detail && detail.module
                                       ? detail.module

@@ -239,6 +239,7 @@ const Module = () => {
                                 name="module"
                                 value={moduleName}
                                 onChange={(e) => setModuleName(e.target.value)}
+                                required
                               />
                               <label htmlFor="floatingInputModuleName">
                                 Module
@@ -253,6 +254,7 @@ const Module = () => {
                                 name="hours"
                                 value={hoursNumber}
                                 onChange={(e) => setHoursNumber(e.target.value)}
+                                required
                               />
                               <label htmlFor="floatingInputHours">
                                 No of hours
@@ -267,6 +269,7 @@ const Module = () => {
                                 name="prize"
                                 value={prize}
                                 onChange={(e) => setPrize(e.target.value)}
+                                required
                               />
                               <label htmlFor="floatingInputPrize">Prize</label>
                             </div>

@@ -67,7 +67,6 @@ const Membership = () => {
   const [technologies, setTechnologies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
-
   useEffect(() => {
     // Fetch data from the API when the component mounts loding
 
@@ -96,8 +95,7 @@ const Membership = () => {
         }
       } catch (error) {
         console.error("Error fetching data:", error);
-      }
-      finally {
+      } finally {
         // Move setIsLoading(false) inside the 'if' block after setting the data
         setIsLoading(false);
       }
@@ -133,7 +131,6 @@ const Membership = () => {
       console.error("Error deleting technology:", error.message);
       // Handle error scenarios
     }
-
   };
 
   return (
@@ -159,7 +156,6 @@ const Membership = () => {
                 </div>
 
                 {/* RENDERING LODING */}
-               
 
                 {/* <!-- Add Modal --> */}
                 <div
@@ -193,6 +189,7 @@ const Membership = () => {
                                 placeholder="name@example.com"
                                 name="technology"
                                 onChange={handleChange}
+                                required
                               />
                               <label for="floatingInput">Technology</label>
                             </div>
@@ -204,6 +201,7 @@ const Membership = () => {
                                 placeholder="name@example.com"
                                 name="hours"
                                 onChange={handleChange}
+                                required
                               />
                               <label for="floatingInput">Per Hours Rate</label>
                             </div>
@@ -355,33 +353,32 @@ const Membership = () => {
                         </tr>
                       ))
                     ) : (
-                      
                       <tr>
                         <td colSpan="4" style={{ textAlign: "center" }}>
-                        No technologies available{" "}
-                        </td>  
+                          No technologies available{" "}
+                        </td>
                       </tr>
-              
                     )}
-                    <tr colSpan="6" style={{ textAlign: 'center' }}> 
+                    <tr colSpan="6" style={{ textAlign: "center" }}>
                       <div>
-                  {/* Conditional rendering based on isLoading */}
-                  {isLoading ? (
-                    <p style={{ textAlign: 'center' }}>Loading...</p>
-
-                  ) : (
-                    <div>
-                      {/* Render your fetched data or component here */}
-                      {Array.isArray(technologies) && technologies.length > 0 ? (
-                        technologies.map((tech) => (
-                          <div key={tech.id}>{tech.name}</div>
-                        ))
-                      ) : (
-                        <p></p>
-                      )}
-                    </div>
-                  )}
-                </div></tr>
+                        {/* Conditional rendering based on isLoading */}
+                        {isLoading ? (
+                          <p style={{ textAlign: "center" }}>Loading...</p>
+                        ) : (
+                          <div>
+                            {/* Render your fetched data or component here */}
+                            {Array.isArray(technologies) &&
+                            technologies.length > 0 ? (
+                              technologies.map((tech) => (
+                                <div key={tech.id}>{tech.name}</div>
+                              ))
+                            ) : (
+                              <p></p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    </tr>
                   </tbody>
                 </table>
                 <div className="pro-add-new px-0 mb-0 pt-3">
