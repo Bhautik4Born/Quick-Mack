@@ -25,11 +25,10 @@ const Signin = () => {
   const [password, setPassword] = useState("");
   const [apiResponse, setApiResponse] = useState("");
   const [messageColor, setMessageColor] = useState("red"); // State to determine message color
-  const [isLoading, setIsLoading] = useState(false);
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
+  
 
     try {
       const response = await axios.post(`${baseURL}api/login/login`, {
@@ -54,9 +53,7 @@ const Signin = () => {
         color: "green",
       };
     }
-    finally {
-      setIsLoading(false); // Set isLoading to false regardless of success or failure
-    }
+   
   };
   useEffect(() => {
     if (apiResponse === "Login successful") {
@@ -114,10 +111,7 @@ const Signin = () => {
                       type="checkbox"
                       id="gridCheck"
                     />
-                    <div>
-                      {isLoading && <p>Loading...</p>}
-                      {/* Rest of your component */}
-                    </div>
+                    
                     <label className="form-check-label" htmlFor="gridCheck">
                       Remember me
                     </label>
@@ -130,7 +124,7 @@ const Signin = () => {
                   Sign in
                 </button>
                 {/* <p style={{ color: "red" }}>{apiResponse}</p> */}
-                <p style={{ color: messageColor, display:"none"}}>{apiResponse}</p>
+                <p style={{ color: messageColor,display:"none"}}>{apiResponse}</p>
 
               </form>
               <div className="create-acc">

@@ -326,6 +326,33 @@ const CreateProject = () => {
                                 ></input>
                                 <br></br>
                                 <br></br>
+                                <div className="five-tech" style={{ flexWrap: "wrap" }}>
+                          {data && Array.isArray(data.technology_names) ? (
+                            data.technology_names.map((techName) => (
+                              <p key={techName}>
+                                {/* <a
+                                  href="#"
+                                  className={
+                                    activeLinks.includes(techName)
+                                      ? "active"
+                                      : ""
+                                  }
+                                  onClick={() => handleLinkClick(techName)}
+                                > */}
+                                  
+                                <input
+                                // key={techName}
+                                  type="hidden"
+                                  name="technology_ids[]"
+                                  value={[techName]}
+                                ></input>
+                                {/* </a> */}
+                              </p>
+                            ))
+                          ) : (
+                            <p>No technology names available</p>
+                          )}
+                        </div>
                                 <button>+++</button>
                               </form>
                               <input
