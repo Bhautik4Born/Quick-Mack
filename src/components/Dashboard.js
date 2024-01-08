@@ -116,7 +116,7 @@ const Dashboard = () => {
     }
   };
   useEffect(() => {
-    const fetchTechnologies = async () => {
+    const fetchData = async () => {
       try {
         const userId = document.cookie.replace(
           /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
@@ -124,7 +124,7 @@ const Dashboard = () => {
         );
 
         const response = await fetch(
-          `${baseURL}api/UserTechnologies/getUserTechnologies`,
+          `${baseURL}api/showtotalRecoder/checkUserId`,
           {
             method: "POST",
             headers: {
@@ -147,8 +147,63 @@ const Dashboard = () => {
       }
     };
 
-    fetchTechnologies();
+    fetchData();
   }, []);
+//count 
+
+const [totalTotalRecord, setTotalTotalRecord] = useState(0);
+const [moduleTotalRecord, setModuleTotalRecord] = useState(0);
+const [projectTotalRecord, setProjectTotalRecord] = useState(0);
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+      const user_Id = document.cookie.replace(
+        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+        "$1"
+      );
+      const userId = user_Id; // Replace with your user ID retrieval logic
+
+      const response = await fetch(`${baseURL}api/showtotalRecoder/checkUserId`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: userId }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const responseData = await response.json();
+      if (responseData && responseData.Counttechnology) {
+        setTotalTotalRecord(responseData.Counttechnology);
+      }
+      if (responseData && responseData.Module) {
+        setModuleTotalRecord(responseData.Module);
+      }
+      if (responseData && responseData.Project) {
+        setProjectTotalRecord(responseData.Project);
+      }
+      
+      // Assuming you want to set state for different keys in the same response object
+      // Adjust the conditionals based on the structure of your response data
+
+      if (responseData && responseData.data) {
+        setTechnologies(responseData.data);
+      } 
+      // Assuming CountModule and CountProject are also in different parts of the response
+      // Set the respective state variables accordingly based on your response structure
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+
+  fetchData();
+}, []);
+
+
 
   return (
     <div>
@@ -194,8 +249,8 @@ const Dashboard = () => {
                     </div>
                     <div className="add-technology">
                       <p>
-                        Add Technology{" "}
-                        <span className="add-tech-text">(10)</span>
+                        Add Technology{""}<br></br>
+                        <span className="add-tech-text"> ( {totalTotalRecord} )</span>
                       </p>
                     </div>
                   </div>
@@ -286,7 +341,7 @@ const Dashboard = () => {
                     </div>
                     <div className="add-technology">
                       <p>
-                        Add Module <span className="add-mod-text">(10)</span>
+                        Add Module<br></br> <span className="add-mod-text">( {moduleTotalRecord} )</span>
                       </p>
                     </div>
                   </div>
@@ -417,8 +472,8 @@ const Dashboard = () => {
                     </div>
                     <div className="add-technology">
                       <p>
-                        Create Project{" "}
-                        <span className="add-pro-text">(10)</span>
+                        Create Project{' '}
+                        <span className="add-pro-text"><br/>( {projectTotalRecord} )</span>
                       </p>
                     </div>
                   </div>

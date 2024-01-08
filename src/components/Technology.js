@@ -108,6 +108,45 @@ const Membership = () => {
 
     fetchData();
   }, []);
+  // useEffect(() => {
+  //   const fetch = async () => {
+  //     try {
+  //       const user_Id = document.cookie.replace(
+  //         /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+  //         "$1"
+  //       );
+  //       const userId = user_Id; // Replace with your user ID retrieval logic
+
+  //       const response = await fetch(`${baseURL}api/UserTechnologies/getUserTechnologies`, {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify({ user_id: userId }),
+  //       });
+
+  //       if (!response.ok) {
+
+  //         throw new Error("Failed to fetch data");
+  //       }
+
+  //       const responseData = await response.json();
+  //       if (responseData && responseData.total_records) {
+  //         setTotalRecords(responseData.total_records);
+  //       }
+
+  //       if (responseData && responseData.data) {
+  //         setTechnologies(responseData.data);
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching data:", error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+
+  //   fetchData();
+  // }, []);
 
   const [deleteResponse, setDeleteResponse] = useState(null);
 
