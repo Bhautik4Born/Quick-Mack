@@ -41,7 +41,7 @@ const Project = () => {
                 </div>
                 <div className="all-project-table all-project-plus">
                   <Link to={"#"}>
-                    <div className="project-one active">
+                    <div className="pr oject-one active">
                       <div className="project-photo-discription">
                         <img src={projectphoto} alt="" />
                         <div className="pro-title-disc">
