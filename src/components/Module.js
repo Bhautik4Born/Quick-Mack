@@ -95,9 +95,9 @@ const Module = () => {
 
   };
 
+  const [totalRecords, setTotalRecords] = useState(0);
   const [userModules, setUserModules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -119,17 +119,17 @@ const Module = () => {
           throw new Error("Failed to fetch data");
         }
 
-        const data = await response.json();
-        if (data && data.data) {
-          setTechnologies(data.data);
+        const responseData = await response.json();
+        if (responseData && responseData.total_records) {
+          setTotalRecords(responseData.total_records);
         }
 
-        setUserModules(data.data);
+        if (responseData && responseData.data) {
+          setUserModules(responseData.data);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
-      }
-      finally {
-        // Move setIsLoading(false) inside the 'if' block after setting the data
+      } finally {
         setIsLoading(false);
       }
     };
@@ -174,8 +174,18 @@ const Module = () => {
             <div className="col-12 mb-24">
               <div className="bg-box">
                 <div className="pro-add-new px-0">
-                  <p>
-                    Module <span>6</span>
+                  <p style={{display:"flex"}}>
+                  Total  Module <span>
+                      <div>
+                        {isLoading ? (
+                          <p>Loading...</p>
+                        ) : (
+                          <div>
+                            {totalRecords}
+                          </div>
+                        )}
+                      </div>
+                    </span>
                   </p>
                   <Link
                     type="button"
@@ -496,25 +506,25 @@ const Module = () => {
                     {/* RENDERING LODING */}
                     <tr>
                       <td colSpan="6" style={{ textAlign: 'center' }}>
-                    <div>
-                      {/* Conditional rendering based on isLoading */}
-                      {isLoading ? (
-                        <p style={{ textAlign: 'center' }}>Loading...</p>
-
-                      ) : (
                         <div>
-                          {/* Render your fetched data or component here */}
-                          {Array.isArray(technologies) && technologies.length > 0 ? (
-                            technologies.map((tech) => (
-                              <div key={tech.id}>{tech.name}</div>
-                            ))
+                          {/* Conditional rendering based on isLoading */}
+                          {isLoading ? (
+                            <p style={{ textAlign: 'center' }}>Loading...</p>
+
                           ) : (
-                            <p style={{ textAlign: 'center' }}>No Module available</p>
+                            <div>
+                              {/* Render your fetched data or component here */}
+                              {Array.isArray(technologies) && technologies.length > 0 ? (
+                                technologies.map((tech) => (
+                                  <div key={tech.id}>{tech.name}</div>
+                                ))
+                              ) : (
+                                <p style={{ textAlign: 'center' }}>No Module available</p>
+                              )}
+                            </div>
                           )}
                         </div>
-                      )}
-                    </div>
-                    </td>
+                      </td>
                     </tr>
 
 

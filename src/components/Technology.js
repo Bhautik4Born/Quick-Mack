@@ -66,37 +66,42 @@ const Membership = () => {
 
   const [technologies, setTechnologies] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [totalRecords, setTotalRecords] = useState(0);
+
 
   useEffect(() => {
-    // Fetch data from the API when the component mounts loding
-
     const fetchData = async () => {
       try {
-        const userId = document.cookie.replace(
+        const user_Id = document.cookie.replace(
           /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
           "$1"
         );
-        const response = await fetch(
-          `${baseURL}api/UserTechnologies/getUserTechnologies`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ user_id: userId }),
-          }
-        );
+        const userId = user_Id; // Replace with your user ID retrieval logic
 
-        if (response.ok) {
-          const data = await response.json();
-          setTechnologies(data.data);
-        } else {
-          console.error("Failed to fetch data");
+        const response = await fetch(`${baseURL}api/UserTechnologies/getUserTechnologies`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
+
+        if (!response.ok) {
+
+          throw new Error("Failed to fetch data");
+        }
+
+        const responseData = await response.json();
+        if (responseData && responseData.total_records) {
+          setTotalRecords(responseData.total_records);
+        }
+
+        if (responseData && responseData.data) {
+          setTechnologies(responseData.data);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
-        // Move setIsLoading(false) inside the 'if' block after setting the data
         setIsLoading(false);
       }
     };
@@ -142,8 +147,18 @@ const Membership = () => {
             <div className="col-12 mb-24">
               <div className="bg-box">
                 <div className="pro-add-new px-0">
-                  <p>
-                    Technology <span>6</span>
+                  <p style={{ display: "flex" }}>
+                    Total Technology  <span>
+                      <div>
+                        {isLoading ? (
+                          <p>Loading...</p>
+                        ) : (
+                          <div>
+                            {totalRecords}
+                          </div>
+                        )}
+                      </div>
+                    </span>
                   </p>
                   <Link
                     type="button"
@@ -368,7 +383,7 @@ const Membership = () => {
                           <div>
                             {/* Render your fetched data or component here */}
                             {Array.isArray(technologies) &&
-                            technologies.length > 0 ? (
+                              technologies.length > 0 ? (
                               technologies.map((tech) => (
                                 <div key={tech.id}>{tech.name}</div>
                               ))
