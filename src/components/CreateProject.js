@@ -23,7 +23,7 @@ const CreateProject = () => {
 
   const queryParameters = new URLSearchParams(window.location.search);
   const retrievedProjectId = queryParameters.get("projectId");
-  console.log(retrievedProjectId);
+  // console.log(retrievedProjectId);
 
   const buttonStyle = {
     border: "none",
@@ -66,7 +66,7 @@ const CreateProject = () => {
 
       const queryParameters = new URLSearchParams(window.location.search);
       const retrievedProjectId = queryParameters.get("projectId");
-      console.log(retrievedProjectId);
+      // console.log(retrievedProjectId);
 
       const data = await response.json();
       if (data.message === "Data stored successfully!") {
@@ -139,7 +139,7 @@ const CreateProject = () => {
         );
         const queryParameters = new URLSearchParams(window.location.search);
         const retrievedProjectId = queryParameters.get("projectId");
-        console.log(retrievedProjectId);
+        // console.log(retrievedProjectId);
 
         const response = await fetch(
           "https://quickmake.graphiglow.in/api/ProjectModule/project",
@@ -172,6 +172,49 @@ const CreateProject = () => {
 
     fetchData();
   }, []); // Runs once on component mount
+// Function to delete a module via API call
+
+///delete api
+
+const handleDelete = async (module_ID) => {
+  try {
+    const queryParameters = new URLSearchParams(window.location.search);
+    const retrievedProjectId = queryParameters.get("projectId");
+    console.log(retrievedProjectId);
+
+    // const queryModule = new URLSearchParams(window.location.search);
+    // const retrievedModuleID = queryModule.get("module_ID");
+    console.log(module_ID.toString());
+
+    const response = await fetch(`${baseURL}api/ProjectModuleDelete/deleteModule`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ project_id:retrievedProjectId, module_id:module_ID.toString() }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      // setDeleteResponse(data); // Store API response for display or further use
+      alert(`Module Deleted Successfully ${retrievedProjectId}`);
+      window.location.href = `/CreateProject/?projectId=${retrievedProjectId}`; // Redirect to home page
+    } else {
+      throw new Error("Failed to delete Module");
+    }
+  } catch (error) {
+    alert(`Fail${retrievedProjectId}`);
+    console.error("Error deleting Module:", error.message);
+    // Handle error scenarios
+  }
+};
+
+
+// Example usage of deleteModule function (trigger this as needed)
+// Call this function when you want to delete a module, passing the module ID as an argument
+// Replace 'moduleIdToDelete' with the actual ID of the module you want to delete
+// deleteModule(moduleIdToDelete);
+//
 
   return (
     <div>
@@ -309,44 +352,26 @@ const CreateProject = () => {
                                 method="POST"
                                 action="https://quickmake.graphiglow.in/API/ModuleProject.php"
                               >
-                                <input
-                                  type="hidden"
-                                  name="user_id"
-                                  value={userId}
-                                ></input>
-                                <input
-                                  type="hidden"
-                                  name="module_id"
-                                  value={data.id}
-                                ></input>
-                                <input
-                                  type="hidden"
-                                  name="project_id"
-                                  value={retrievedProjectId}
-                                ></input>
-                                <br></br>
-                                <br></br>
-                                <div
-                                  className="five-tech"
-                                  style={{ flexWrap: "wrap" }}
-                                >
-                                  {data &&
-                                  Array.isArray(data.technology_names) ? (
+                                <input type="hidden" name="user_id" value={userId}></input>
+                                <input type="hidden" name="module_id" value={data.id}></input>
+                                <input type="hidden" name="project_id" value={retrievedProjectId}></input>
+                                <br />
+                                <br />
+                                <div className="five-tech" style={{ flexWrap: "wrap" }}>
+                                  {data && Array.isArray(data.technology_names) ? (
                                     data.technology_names.map((techName) =>
                                       activeLinks.includes(techName) ? (
-                                        <p key={[techName]}>
+                                        <p key={techName}>
                                           <input
                                             type="hidden"
                                             name="technology_ids[]"
-                                            value={[techName]}
-                                          ></input>
+                                            value={techName} // Pass techName value directly without backticks and square brackets
+                                          />
                                           <button
                                             style={{ display: "none" }}
                                             type="hidden"
                                             className="active"
-                                            onClick={() =>
-                                              handleLinkClick([techName])
-                                            }
+                                            onClick={() => handleLinkClick([techName])}
                                           >
                                             {[techName]}
                                           </button>
@@ -357,8 +382,10 @@ const CreateProject = () => {
                                     <p>No technology names available</p>
                                   )}
                                 </div>
+
                                 <button>++</button>
                               </form>
+
 
                               <input
                                 className="form-check-input"
@@ -379,7 +406,7 @@ const CreateProject = () => {
                             <h4>{data.hours_number}</h4>
                           </div>
                         </div>
-                        <div className="five-tech" style={{ flexWrap: "wrap" }}>
+                        <div className="five-tech" style={{ flexWrap: "wrap" }}> 
                           {data && Array.isArray(data.technology_names) ? (
                             data.technology_names.map((techName) => (
                               <p key={techName}>
@@ -398,7 +425,7 @@ const CreateProject = () => {
                             ))
                           ) : (
                             <p>No technology names available</p>
-                          )}
+                          )}    
                         </div>
                       </div>
                     ))
@@ -488,9 +515,13 @@ const CreateProject = () => {
                                   </td>
                                   <td>
                                     <div className="icon-up-del justify-content-center">
-                                      <Link to="#">
-                                        <i className="fa-solid fa-trash me-0"></i>
-                                      </Link>
+                                    <Link
+                                      to={{ pathname: `/CreateProject/module_ID=${detail.id}&projectId=${retrievedProjectId}` }}
+                                      onClick={() => handleDelete(detail.id)}
+                                      type="button"
+                              >
+                                <i className="fa-solid fa-trash"></i>
+                              </Link>
                                     </div>
                                   </td>
                                 </tr>
