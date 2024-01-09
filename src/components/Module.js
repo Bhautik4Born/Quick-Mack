@@ -165,7 +165,13 @@ const Module = () => {
     }
   };
   
+// upadte details
+const [selectedTechId, setSelectedTechId] = useState(null);
+  const [techDetail, setTechDetail] = useState(null);
+  const [hourse, setHourse] = useState(null);
+  // const [isLoading, setIsLoading] = useState(true);
 
+  
 
   return (
     <div>
@@ -545,6 +551,8 @@ const Module = () => {
 
                             <div className="icon-up-del">
                               <Link
+                                to={{ pathname: `/${module.id}` }}
+                              
                                 type="button"
                                 data-bs-toggle="modal"
                                 data-bs-target="#exampleModaledit"

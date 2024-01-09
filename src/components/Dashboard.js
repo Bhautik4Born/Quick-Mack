@@ -72,46 +72,9 @@ const Dashboard = () => {
   const [responseMessageModule, setResponseMessageModule] = useState("");
   // const [technologyId, setSelectedTechnology] = useState("");
 
-  useEffect(() => {
-    const fetchTechnologies = async () => {
-      try {
-        const userId = document.cookie.replace(
-          /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
-          "$1"
-        );
-
-        const response = await fetch(
-          `${baseURL}api/UserTechnologies/getUserTechnologies`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              user_id: userId,
-            }),
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Network response was not ok.");
-        }
-
-        const data = await response.json();
-        setTechnologies(data.data);
-      } catch (error) {
-        console.error("Error fetching technologies:", error);
-      }
-    };
-
-    fetchTechnologies();
-  }, []);
-
   const handleSelectChange = (event) => {
-    event.preventDefault();
     setSelectedTechnology(event.target.value);
   };
-  
   const [technologies, setTechnologies] = useState([]);
 
   const handleModuleSubmit = async (event) => {
@@ -152,6 +115,7 @@ const Dashboard = () => {
       console.error("Error:", error);
     }
   };
+  
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -239,6 +203,41 @@ useEffect(() => {
 
   fetchData();
 }, []);
+
+useEffect(() => {
+  const fetchTechnologies = async () => {
+    try {
+      const userId = document.cookie.replace(
+        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+        "$1"
+      );
+
+      const response = await fetch(
+        `${baseURL}api/UserTechnologies/getUserTechnologies`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: userId,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok.");
+      }
+
+      const data = await response.json();
+      setTechnologies(data.data);
+    } catch (error) {
+      console.error("Error fetching technologies:", error);
+    }
+  };
+
+  fetchTechnologies();
+}, []); 
 
 
 
@@ -485,9 +484,9 @@ useEffect(() => {
                           </div>
 
                           {/* Display response message */}
-                          {/* {responseMessageModule && (
+                          {responseMessageModule && (
                             <p>{responseMessageModule}</p>
-                          )} */}
+                          )}
                         </form>
                       </div>
                     </div>

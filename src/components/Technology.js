@@ -65,8 +65,9 @@ const Membership = () => {
   };
 
   const [technologies, setTechnologies] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  // const [isLoading, setIsLoading] = useState(true);
   const [totalRecords, setTotalRecords] = useState(0);
+  // const [techDetail, setTechDetail] = useState(0);
 
 
   useEffect(() => {
@@ -108,48 +109,10 @@ const Membership = () => {
 
     fetchData();
   }, []);
-  // useEffect(() => {
-  //   const fetch = async () => {
-  //     try {
-  //       const user_Id = document.cookie.replace(
-  //         /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
-  //         "$1"
-  //       );
-  //       const userId = user_Id; // Replace with your user ID retrieval logic
 
-  //       const response = await fetch(`${baseURL}api/UserTechnologies/getUserTechnologies`, {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ user_id: userId }),
-  //       });
 
-  //       if (!response.ok) {
-
-  //         throw new Error("Failed to fetch data");
-  //       }
-
-  //       const responseData = await response.json();
-  //       if (responseData && responseData.total_records) {
-  //         setTotalRecords(responseData.total_records);
-  //       }
-
-  //       if (responseData && responseData.data) {
-  //         setTechnologies(responseData.data);
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
 
   const [deleteResponse, setDeleteResponse] = useState(null);
-
   const handleDelete = async (id) => {
     try {
       const response = await fetch(
@@ -176,6 +139,81 @@ const Membership = () => {
       // Handle error scenarios
     }
   };
+
+  //updateeDetail ...
+  const [selectedTechId, setSelectedTechId] = useState(null);
+  const [techDetail, setTechDetail] = useState(null);
+  const [hourse, setHourse] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+
+        const response = await fetch(`${baseURL}api/Updatetechnologydetail/getTechnology`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ technology_id: selectedTechId }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const RData = await response.json();
+        if (RData && RData.technology) {
+          const { technology, hourse } = RData.technology;
+          setTechDetail(technology);
+          setHourse(hourse);
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [selectedTechId]); // Fetch data whenever selectedTechId changes
+
+  const handleIconClick = (id) => {
+    setSelectedTechId(id);
+  };
+  //Upadte dataa
+
+
+  const updateTechnology = async () => {
+    try {
+      const response = await fetch('https://quickmake.graphiglow.in/api/UpdateTechnology/updateTechnology', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          technology_id: selectedTechId,
+          technology: techDetail,
+          hours: hourse,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update data');
+      }
+
+      const data = await response.json();
+      if (data.message === 'Data updated successfully!') {
+        alert('Data updated successfully!');
+        window.location.href = "/Technology";
+      }
+    } catch (error) {
+      console.error('Error updating data:', error);
+    }
+  };
+
+
+
 
   return (
     <div>
@@ -294,6 +332,8 @@ const Membership = () => {
                     <div className="modal-content">
                       <div className="modal-header">
                         <h5 className="modal-title" id="exampleModalLabel">
+                          <p>Selected Tech ID: {selectedTechId}</p>
+
                           Edit Technology
                         </h5>
                         <button
@@ -305,27 +345,35 @@ const Membership = () => {
                       </div>
                       <div className="modal-body">
                         <div className="user-details">
-                          <form>
+                          <form onSubmit={(e) => {
+                            e.preventDefault(); // Prevents default form submission behavior
+                            updateTechnology();
+                          }}>
                             <div className="form-floating mb-4 mt-2">
                               <input
                                 type="text"
                                 className="form-control"
-                                id="floatingInput"
-                                placeholder="name@example.com"
+                                id="technologyInput"
+                                placeholder="Technology"
+                                value={techDetail}
+                                onChange={(e) => setTechDetail(e.target.value)}
                               />
-                              <label for="floatingInput">Technology</label>
+                              <label htmlFor="technologyInput">Technology</label>
                             </div>
                             <div className="form-floating mb-4">
                               <input
-                                type="text"
+                                type="number"
                                 className="form-control"
-                                id="floatingInput"
-                                placeholder="name@example.com"
+                                id="hoursInput"
+                                placeholder="Per Hours Rate"
+                                value={hourse}
+                                onChange={(e) => setHourse(e.target.value)}
                               />
-                              <label for="floatingInput">Per Hours Rate</label>
+                              <label htmlFor="hoursInput">Per Hours Rate</label>
                             </div>
                             <div className="upload-reset-btn mb-0 justify-content-center pt-2">
                               <button
+                                type="submit"
                                 className="btn btn-upload"
                                 data-bs-dismiss="modal"
                               >
@@ -377,11 +425,11 @@ const Membership = () => {
                           <td>
                             <div className="icon-up-del">
                               <Link
-                                type="button"
                                 to={{
                                   pathname: `/edit/${tech.id}`,
                                   state: { id: tech.id },
                                 }}
+                                onClick={() => handleIconClick(tech.id)} // Handle icon click to set the selected ID
                                 data-bs-toggle="modal"
                                 data-bs-target="#exampleModaledit"
                               >
