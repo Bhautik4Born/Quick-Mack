@@ -143,7 +143,7 @@ const Membership = () => {
   //updateeDetail ...
   const [selectedTechId, setSelectedTechId] = useState(null);
   const [techDetail, setTechDetail] = useState(null);
-  const [hourse, setHourse] = useState(null);
+  const [hours, setHourse] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -156,7 +156,7 @@ const Membership = () => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ technology_id: selectedTechId }),
-        });   
+        });
 
         if (!response.ok) {
           throw new Error('Failed to fetch data');
@@ -164,9 +164,9 @@ const Membership = () => {
 
         const RData = await response.json();
         if (RData && RData.technology) {
-          const { technology, hourse } = RData.technology;
+          const { technology, hours } = RData.technology;
           setTechDetail(technology);
-          setHourse(hourse);
+          setHourse(hours);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -194,7 +194,7 @@ const Membership = () => {
         body: JSON.stringify({
           technology_id: selectedTechId,
           technology: techDetail,
-          hourse: hourse,
+          hours: hours,
         }),
       });
 
@@ -212,7 +212,25 @@ const Membership = () => {
     }
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10; // Number of records to display per page
 
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+  const currentRecords = technologies.slice(
+    indexOfFirstRecord,
+    indexOfLastRecord
+  );
+
+  const totalPages = Math.ceil(technologies.length / recordsPerPage);
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
 
   return (
@@ -291,7 +309,7 @@ const Membership = () => {
                                 className="form-control"
                                 id="floatingInput"
                                 placeholder="name@example.com"
-                                name="hourse"
+                                name="hours"
                                 onChange={handleChange}
                                 required
                               />
@@ -366,7 +384,7 @@ const Membership = () => {
                                 className="form-control"
                                 id="hoursInput"
                                 placeholder="Per Hours Rate"
-                                value={hourse}
+                                value={hours}
                                 onChange={(e) => setHourse(e.target.value)}
                               />
                               <label htmlFor="hoursInput">Per Hours Rate</label>
@@ -393,7 +411,99 @@ const Membership = () => {
                   </div>
                 </div>
                 {/* <!--End Edit Modal --> */}
-                <div className="">
+                <div>
+                  {/* ... (rest of your JSX structure) */}
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th scope="col">No</th>
+                        <th scope="col">Technology</th>
+                        <th scope="col">Per Hours Rate</th>
+                        <th scope="col">Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentRecords.map((tech, index) => (
+                        <tr key={index}>
+                          <td>{tech.sequence_number}</td>
+                          <td>{tech.technology}</td>
+                          <td>{tech.hourse}</td>
+                          <td>
+                            <td>
+                              
+                              <div className="icon-up-del">
+                                <Link
+                                  to={{
+                                    pathname: `/edit/${tech.id}`,
+                                    state: { id: tech.id },
+                                  }}
+                                  onClick={() => handleIconClick(tech.id)} // Handle icon click to set the selected ID
+                                  data-bs-toggle="modal"
+                                  data-bs-target="#exampleModaledit"
+                                >
+                                  <i className="fa-solid fa-pen"></i>
+                                </Link>
+                               
+                                <Link
+                                  to={{ pathname: `/${tech.id}` }}
+                                  onClick={() => handleDelete(tech.id)}
+                                  type="button"
+                                >
+                                  <i className="fa-solid fa-trash"></i>
+                                </Link>
+                                {deleteResponse && (
+                                  <div>
+                                    <p>API Response:</p>
+                                    <pre>
+                                      {JSON.stringify(deleteResponse, null, 2)}
+                                    </pre>
+                                  </div>
+                                )}
+                              </div>
+                            </td>
+                          </td>
+                        </tr>
+                      ))}
+                      
+                    </tbody>
+                    <div>
+                        {isLoading ? (
+                          <p style={{textAlign:'center'}}>Loading...</p>
+                        ) : (
+                          <div>
+                            {/* {totalRecords} */}
+                          </div>
+                        )}
+                      </div>
+                  </table>
+                  <div className="pro-add-new px-0 mb-0 pt-3">
+                    <p>
+                      {`Showing ${indexOfFirstRecord + 1} - ${indexOfLastRecord > technologies.length
+                          ? technologies.length
+                          : indexOfLastRecord
+                        } of ${technologies.length}`}
+                    </p>
+                    <nav aria-label="...">
+                      <ul className="pagination pagination-sm mb-0">
+                        {pageNumbers.map((number) => (
+                          <li
+                            key={number}
+                            className={`page-item ${currentPage === number ? "active" : ""
+                              }`}
+                          >
+                            <button
+                              onClick={() => handlePageChange(number)}
+                              className="page-link"
+                            >
+                              {number}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    </nav>
+                  </div>
+                </div>
+                {/* <div className="">
                   <div className="p-0 d-flex justify-content-end">
                     <div className="form-floating small-floating mb-3 text-end">
                       <input
@@ -405,8 +515,8 @@ const Membership = () => {
                       <label for="floatingInput">Search</label>
                     </div>
                   </div>
-                </div>
-                <table className="table">
+                </div> */}
+                {/* <table className="table">
                   <thead>
                     <tr>
                       <th scope="col">No</th>
@@ -463,12 +573,10 @@ const Membership = () => {
                     )}
                     <tr colSpan="6" style={{ textAlign: "center" }}>
                       <div>
-                        {/* Conditional rendering based on isLoading */}
                         {isLoading ? (
                           <p style={{ textAlign: "center" }}>Loading...</p>
                         ) : (
                           <div>
-                            {/* Render your fetched data or component here */}
                             {Array.isArray(technologies) &&
                               technologies.length > 0 ? (
                               technologies.map((tech) => (
@@ -482,8 +590,8 @@ const Membership = () => {
                       </div>
                     </tr>
                   </tbody>
-                </table>
-                <div className="pro-add-new px-0 mb-0 pt-3">
+                </table> */}
+                {/* <div className="pro-add-new px-0 mb-0 pt-3">
                   <p>1 - 6 of 6</p>
                   <nav aria-label="...">
                     <ul className="pagination pagination-sm mb-0">
@@ -502,7 +610,7 @@ const Membership = () => {
                       </li>
                     </ul>
                   </nav>
-                </div>
+                </div> */}
               </div>
             </div>
           </div>

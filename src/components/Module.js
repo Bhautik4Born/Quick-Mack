@@ -241,9 +241,10 @@ const handleIconClick = (id) => {
       console.error('Error updating data:', error);
     }
   };
+ 
+
 
   
-
   return (
     <div>
       {<Sidebar />}
@@ -392,7 +393,7 @@ const handleIconClick = (id) => {
                     </div>
                   </div>
                 </div>
-
+               
 
                 {/* <!--End Add Modal --> */}
                 {/* <!-- Edit Modal --> */}
@@ -674,6 +675,7 @@ const handleIconClick = (id) => {
 
                   </tbody>
                 </table>
+                
                 <div className="pro-add-new px-0 mb-0 pt-3">
                   <p>1 - 6 of 6</p>
                   <nav aria-label="...">
