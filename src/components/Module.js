@@ -633,17 +633,13 @@ const handleIconClick = (id) => {
                         </div>
                       </td>
                     </tr>
-
-
                     {/* LODING MODULE ADDD */}
-
-
                     {Array.isArray(userModules) && userModules.length > 0 ? (
                       userModules.map((module, index) => (
                         <tr key={module.id}>
                           <th scope="row">{index + 1}</th>
                           <td className="td-technology">{module.module}</td>
-                          <td>{module.technology_id}</td>
+                          <td>{module.technology}</td>
                           <td>{module.hours_number}</td>
                           <td>$ {module.prize}</td>
                           <td>
