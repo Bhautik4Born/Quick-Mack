@@ -166,10 +166,83 @@ const Module = () => {
   };
   
 // upadte details
+const[module,steModule]=useState(null);
 const [selectedTechId, setSelectedTechId] = useState(null);
-  const [techDetail, setTechDetail] = useState(null);
-  const [hourse, setHourse] = useState(null);
-  // const [isLoading, setIsLoading] = useState(true);
+const [techDetail, setTechDetail] = useState(null);
+const [hours_number, setHours_number] = useState(null);
+
+useEffect(() => {
+  const fetchData = async () => {
+    try {
+
+      const response = await fetch(`${baseURL}api/ModuleUpdatesdetail/getModule`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ module_id:selectedTechId }),
+      });   
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+      const RData = await response.json();
+      if (RData && RData.technology) {
+        const {module, technology_id, hours_number,prize } = RData.technology;
+        steModule(module);
+        setTechDetail(technology_id);
+        setHours_number(hours_number);
+        setPrize(prize);
+
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  fetchData();
+}, [selectedTechId]); // Fetch data whenever selectedTechId changes
+
+const handleIconClick = (id) => {
+  setSelectedTechId(id);
+};
+  //update module
+
+  const ModuleUpdates = async () => {
+    try {
+      const response = await fetch('https://quickmake.graphiglow.in/api/ModuleUpdates/moduleupdates', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          module_id: selectedTechId,
+          module:module,
+          Technology_id: techDetail,
+          hours_number: hours_number,
+          prize:prize
+
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update data');
+      }
+
+      const data = await response.json();
+      if (data.message === 'Data updated successfully!') {
+        alert('Data updated successfully!');
+        window.location.href = "/Module";
+      }
+    } catch (error) {
+      console.error('Error updating data:', error);
+    }
+  };
+
+  ///update technology
 
   
 
@@ -240,7 +313,7 @@ const [selectedTechId, setSelectedTechId] = useState(null);
                                 {/* <option value="">Select Technology</option> */}
                                 {technologies && technologies.map((tech) => (
                                   <option key={tech.id} value={tech.id}>
-                                    {tech.technology}
+                                    {tech.technology_id}
                                   </option>
                                 ))}
                               </select>
@@ -270,8 +343,8 @@ const [selectedTechId, setSelectedTechId] = useState(null);
                                 id="floatingInputHours"
                                 placeholder="Hours"
                                 name="hours"
-                                value={hoursNumber}
-                                onChange={(e) => setHoursNumber(e.target.value)}
+                                value={hours_number}
+                                onChange={(e) => setHours_number(e.target.value)}
                                 required
                               />
                               <label htmlFor="floatingInputHours">
@@ -340,17 +413,25 @@ const [selectedTechId, setSelectedTechId] = useState(null);
                       </div>
                       <div className="modal-body">
                         <div className="user-details">
-                          <form>
+                          <form onSubmit={(e) => {
+                            e.preventDefault(); // Prevents default form submission behavior
+                            ModuleUpdates();
+                          }}>
                             <div className="form-floating mb-4 mt-2">
-                              <select
+                            <select
                                 className="form-select form-control"
                                 id="floatingSelectGrid"
                                 aria-label="Floating label select example"
+                                name="technology"
+                                value={selectedTechnology}
+                                onChange={handleSelectChange}
                               >
-                                <option selected>Select Technology</option>
-                                <option value="1">Select Technology</option>
-                                <option value="2">Select Technology</option>
-                                <option value="3">Select Technology</option>
+                                {/* <option value="">Select Technology</option> */}
+                                {technologies && technologies.map((tech) => (
+                                  <option key={tech.id} value={tech.id}>
+                                    {tech.technology}
+                                  </option>
+                                ))}
                               </select>
                               <label for="floatingSelectGrid">
                                 Select Technology
@@ -362,6 +443,8 @@ const [selectedTechId, setSelectedTechId] = useState(null);
                                 className="form-control"
                                 id="floatingInput"
                                 placeholder="name@example.com"
+                                value={module}
+                                onChange={(e) => steModule(e.target.value)}
                               />
                               <label for="floatingInput">Module</label>
                             </div>
@@ -371,6 +454,8 @@ const [selectedTechId, setSelectedTechId] = useState(null);
                                 className="form-control"
                                 id="floatingInput"
                                 placeholder="name@example.com"
+                                value={hours_number}
+                                onChange={(e) => setHours_number(e.target.value)}
                               />
                               <label for="floatingInput">No of hours</label>
                             </div>
@@ -380,6 +465,8 @@ const [selectedTechId, setSelectedTechId] = useState(null);
                                 className="form-control"
                                 id="floatingInput"
                                 placeholder="name@example.com"
+                                value={prize}
+                                onChange={(e) => setPrize(e.target.value)}
                               />
                               <label for="floatingInput">Prize</label>
                             </div>
@@ -552,7 +639,7 @@ const [selectedTechId, setSelectedTechId] = useState(null);
                             <div className="icon-up-del">
                               <Link
                                 to={{ pathname: `/${module.id}` }}
-                              
+                                onClick={() => handleIconClick(module.id)}
                                 type="button"
                                 data-bs-toggle="modal"
                                 data-bs-target="#exampleModaledit"
