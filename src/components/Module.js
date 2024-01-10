@@ -221,7 +221,7 @@ const handleIconClick = (id) => {
         body: JSON.stringify({
           module_id: selectedTechId,
           module:module,
-          Technology_id: techDetail,
+          Technology_id:selectedTechnology,
           hours_number: hours_number,
           prize:prize
 
@@ -234,7 +234,7 @@ const handleIconClick = (id) => {
 
       const data = await response.json();
       if (data.message === 'Data updated successfully!') {
-        alert('Data updated successfully!');
+        alert(`Data updated successfully!   ${selectedTechId},${module},${techDetail},${hours_number},${prize}`);
         window.location.href = "/Module";
       }
     } catch (error) {
@@ -428,7 +428,7 @@ const handleIconClick = (id) => {
                               id="floatingSelectGrid"
                               aria-label="Floating label select example"
                               name="technology"
-                              value={selectedTechnology}
+                              value={techDetail}
                               onChange={handleSelectChange}
                             >
                               <option value="">Select Technology</option>
