@@ -242,8 +242,6 @@ const handleIconClick = (id) => {
     }
   };
 
-  ///update technology
-
   
 
   return (
@@ -302,21 +300,28 @@ const handleIconClick = (id) => {
                         <div className="user-details">
                           <form onSubmit={handleSubmit}>
                             <div className="form-floating mb-4 mt-2">
-                              <select
-                                className="form-select form-control"
-                                id="floatingSelectGrid"
-                                aria-label="Floating label select example"
-                                name="technology"
-                                value={selectedTechnology}
-                                onChange={handleSelectChange}
-                              >
-                                {/* <option value="">Select Technology</option> */}
-                                {technologies && technologies.map((tech) => (
+                            <select
+                              className="form-select form-control"
+                              id="floatingSelectGrid"
+                              aria-label="Floating label select example"
+                              name="technology"
+                              value={selectedTechId}
+                              onChange={handleSelectChange}
+                            >
+                              <option value="">Select Technology</option>
+                              {Array.isArray(technologies) &&
+                                technologies.length > 0 ? (
+                                technologies.map((tech) => (
                                   <option key={tech.id} value={tech.id}>
-                                    {tech.technology_id}
+                                    {tech.technology}
                                   </option>
-                                ))}
-                              </select>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  No Module Available
+                                </option>
+                              )}
+                            </select>
                               <label htmlFor="floatingSelectGrid">
                                 Select Technology
                               </label>
@@ -419,20 +424,27 @@ const handleIconClick = (id) => {
                           }}>
                             <div className="form-floating mb-4 mt-2">
                             <select
-                                className="form-select form-control"
-                                id="floatingSelectGrid"
-                                aria-label="Floating label select example"
-                                name="technology"
-                                value={selectedTechnology}
-                                onChange={handleSelectChange}
-                              >
-                                {/* <option value="">Select Technology</option> */}
-                                {technologies && technologies.map((tech) => (
+                              className="form-select form-control"
+                              id="floatingSelectGrid"
+                              aria-label="Floating label select example"
+                              name="technology"
+                              value={selectedTechnology}
+                              onChange={handleSelectChange}
+                            >
+                              <option value="">Select Technology</option>
+                              {Array.isArray(technologies) &&
+                                technologies.length > 0 ? (
+                                technologies.map((tech) => (
                                   <option key={tech.id} value={tech.id}>
                                     {tech.technology}
                                   </option>
-                                ))}
-                              </select>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  No Module Available
+                                </option>
+                              )}
+                            </select>
                               <label for="floatingSelectGrid">
                                 Select Technology
                               </label>

@@ -143,7 +143,7 @@ const Membership = () => {
   //updateeDetail ...
   const [selectedTechId, setSelectedTechId] = useState(null);
   const [techDetail, setTechDetail] = useState(null);
-  const [hours, setHours] = useState(null);
+  const [hourse, setHourse] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -164,9 +164,9 @@ const Membership = () => {
 
         const RData = await response.json();
         if (RData && RData.technology) {
-          const { technology, hours } = RData.technology;
+          const { technology, hourse } = RData.technology;
           setTechDetail(technology);
-          setHours(hours);
+          setHourse(hourse);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -194,7 +194,7 @@ const Membership = () => {
         body: JSON.stringify({
           technology_id: selectedTechId,
           technology: techDetail,
-          hours: hours,
+          hourse: hourse,
         }),
       });
 
@@ -291,7 +291,7 @@ const Membership = () => {
                                 className="form-control"
                                 id="floatingInput"
                                 placeholder="name@example.com"
-                                name="hours"
+                                name="hourse"
                                 onChange={handleChange}
                                 required
                               />
@@ -366,8 +366,8 @@ const Membership = () => {
                                 className="form-control"
                                 id="hoursInput"
                                 placeholder="Per Hours Rate"
-                                value={hours}
-                                onChange={(e) => setHours(e.target.value)}
+                                value={hourse}
+                                onChange={(e) => setHourse(e.target.value)}
                               />
                               <label htmlFor="hoursInput">Per Hours Rate</label>
                             </div>
