@@ -388,7 +388,7 @@ const CreateProject = () => {
                                           <input
                                             type="hidden"
                                             name="technology_ids[]"
-                                            value={tech.technology_name} // Pass techName value directly
+                                            value={tech.technology_ID} // Pass techName value directly
                                           />
                                           <button
                                             style={{ display: "none" }}
