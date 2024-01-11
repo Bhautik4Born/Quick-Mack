@@ -9,7 +9,7 @@ const Module = () => {
   const [technologies, setTechnologies] = useState([]);
   const [selectedTechnology, setSelectedTechnology] = useState("");
   const [moduleName, setModuleName] = useState("");
-  const [hours_Number, setHoursNumber] = useState("");
+  // const [hours_Number, setHoursNumber] = useState("");
   const [prize, setPrize] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
 
