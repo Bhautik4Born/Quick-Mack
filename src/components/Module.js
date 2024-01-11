@@ -221,7 +221,7 @@ const Module = () => {
         body: JSON.stringify({
           module_id: selectedTechId,
           module: module,
-          Technology_id: selectedTechnology,
+          Technology_id: techDetail,
           hours_number: hours_number,
           prize: prize,
           
@@ -235,7 +235,7 @@ const Module = () => {
 
       const data = await response.json();
       if (data.message === 'Data updated successfully!') {
-        alert(`Data updated successfully!   ${selectedTechId},${module},${techDetail},${hours_number},${prize}`);
+        alert(`Data updated successfully!`);
         window.location.href = "/Module";
       }
     } catch (error) {
@@ -445,28 +445,28 @@ const Module = () => {
                             ModuleUpdates();
                           }}>
                             <div className="form-floating mb-4 mt-2">
-                              <select
-                                className="form-select form-control"
-                                id="floatingSelectGrid"
-                                aria-label="Floating label select example"
-                                name="technology"
-                                value={techDetail}
-                                onChange={handleSelectChange}
-                              >
-                                <option value="">Select Technology</option>
-                                {Array.isArray(technologies) &&
-                                  technologies.length > 0 ? (
-                                  technologies.map((tech) => (
-                                    <option key={tech.id} value={tech.id}>
-                                      {tech.technology}
-                                    </option>
-                                  ))
-                                ) : (
-                                  <option value="" disabled>
-                                    No Module Available
+                               <select
+                              className="form-select form-control"
+                              id="floatingSelectGrid"
+                              aria-label="Floating label select example"
+                              name="technology"
+                              value={techDetail}
+                              onChange={(e) => setTechDetail(e.target.value)}
+                            >
+                               <option value="">Select Technology</option>
+                              {Array.isArray(technologies) &&
+                                technologies.length > 0 ? (
+                                technologies.map((tech) => (
+                                  <option key={tech.id} value={tech.id}>
+                                    {tech.technology}
                                   </option>
-                                )}
-                              </select>
+                                ))
+                              ) : (
+                                <option value="" disabled>
+                                  No Module Available
+                                </option>
+                              )}
+                            </select>
                               <label for="floatingSelectGrid">
                                 Select Technology
                               </label>

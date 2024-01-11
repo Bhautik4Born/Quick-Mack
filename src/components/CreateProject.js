@@ -542,7 +542,7 @@ const CreateProject = () => {
                         onChange={handleproject}
                       />
                       <label for="floatingInput">Project Name</label>
-                    </div>
+                    </div>pdf
                     <div className="form-check form-switch me-2">
                       <label
                         className="form-check-label"
