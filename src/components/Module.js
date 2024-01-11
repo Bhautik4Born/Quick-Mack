@@ -52,7 +52,7 @@ const Module = () => {
     event.preventDefault();
     setSelectedTechnology(event.target.value);
   };
-// Add module....
+  // Add module....
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -164,51 +164,51 @@ const Module = () => {
       // Handle error scenarios
     }
   };
-  
-// upadte details
-const[module,steModule]=useState(null);
-const [selectedTechId, setSelectedTechId] = useState(null);
-const [techDetail, setTechDetail] = useState(null);
-const [hours_number, setHours_number] = useState(null);
 
-useEffect(() => {
-  const fetchData = async () => {
-    try {
+  // upadte details
+  const [module, steModule] = useState(null);
+  const [selectedTechId, setSelectedTechId] = useState(null);
+  const [techDetail, setTechDetail] = useState(null);
+  const [hours_number, setHours_number] = useState(null);
 
-      const response = await fetch(`${baseURL}api/ModuleUpdatesdetail/getModule`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ module_id:selectedTechId }),
-      });   
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
+        const response = await fetch(`${baseURL}api/ModuleUpdatesdetail/getModule`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ module_id: selectedTechId }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+
+        const RData = await response.json();
+        if (RData && RData.technology) {
+          const { module, technology_id, hours_number, prize } = RData.technology;
+          steModule(module);
+          setTechDetail(technology_id);
+          setHours_number(hours_number);
+          setPrize(prize);
+
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setIsLoading(false);
       }
+    };
 
-      const RData = await response.json();
-      if (RData && RData.technology) {
-        const {module, technology_id, hours_number,prize } = RData.technology;
-        steModule(module);
-        setTechDetail(technology_id);
-        setHours_number(hours_number);
-        setPrize(prize);
+    fetchData();
+  }, [selectedTechId]); // Fetch data whenever selectedTechId changes
 
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setIsLoading(false);
-    }
+  const handleIconClick = (id) => {
+    setSelectedTechId(id);
   };
-
-  fetchData();
-}, [selectedTechId]); // Fetch data whenever selectedTechId changes
-
-const handleIconClick = (id) => {
-  setSelectedTechId(id);
-};
   //update module
 
   const ModuleUpdates = async () => {
@@ -220,10 +220,11 @@ const handleIconClick = (id) => {
         },
         body: JSON.stringify({
           module_id: selectedTechId,
-          module:module,
-          Technology_id:selectedTechnology,
+          module: module,
+          Technology_id: selectedTechnology,
           hours_number: hours_number,
-          prize:prize
+          prize: prize,
+          
 
         }),
       });
@@ -241,8 +242,27 @@ const handleIconClick = (id) => {
       console.error('Error updating data:', error);
     }
   };
- 
- 
+
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10; // Number of records to display per page
+
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+  const currentRecords = userModules.slice(indexOfFirstRecord, indexOfLastRecord);
+
+  const totalPages = Math.ceil(userModules.length / recordsPerPage);
+  const pageNumbers = [];
+  for (let i = 1; i <= totalPages; i++) {
+    pageNumbers.push(i);
+  }
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+
+
 
 
   return (
@@ -254,8 +274,8 @@ const handleIconClick = (id) => {
             <div className="col-12 mb-24">
               <div className="bg-box">
                 <div className="pro-add-new px-0">
-                  <p style={{display:"flex"}}>
-                  Total  Module <span>
+                  <p style={{ display: "flex" }}>
+                    Total  Module <span>
                       <div>
                         {isLoading ? (
                           <p>Loading...</p>
@@ -301,28 +321,28 @@ const handleIconClick = (id) => {
                         <div className="user-details">
                           <form onSubmit={handleSubmit}>
                             <div className="form-floating mb-4 mt-2">
-                            <select
-                              className="form-select form-control"
-                              id="floatingSelectGrid"
-                              aria-label="Floating label select example"
-                              name="technology"
-                              value={selectedTechId}
-                              onChange={handleSelectChange}
-                            >
-                              <option value="">Select Technology</option>
-                              {Array.isArray(technologies) &&
-                                technologies.length > 0 ? (
-                                technologies.map((tech) => (
-                                  <option key={tech.id} value={tech.id}>
-                                    {tech.technology}
+                              <select
+                                className="form-select form-control"
+                                id="floatingSelectGrid"
+                                aria-label="Floating label select example"
+                                name="technology"
+                                value={selectedTechId}
+                                onChange={handleSelectChange}
+                              >
+                                <option value="">Select Technology</option>
+                                {Array.isArray(technologies) &&
+                                  technologies.length > 0 ? (
+                                  technologies.map((tech) => (
+                                    <option key={tech.id} value={tech.id}>
+                                      {tech.technology}
+                                    </option>
+                                  ))
+                                ) : (
+                                  <option value="" disabled>
+                                    No Module Available
                                   </option>
-                                ))
-                              ) : (
-                                <option value="" disabled>
-                                  No Module Available
-                                </option>
-                              )}
-                            </select>
+                                )}
+                              </select>
                               <label htmlFor="floatingSelectGrid">
                                 Select Technology
                               </label>
@@ -393,11 +413,11 @@ const handleIconClick = (id) => {
                     </div>
                   </div>
                 </div>
-               
+
 
                 {/* <!--End Add Modal --> */}
                 {/* <!-- Edit Modal --> */}
-                
+
                 <div
                   className="modal fade"
                   id="exampleModaledit"
@@ -425,28 +445,28 @@ const handleIconClick = (id) => {
                             ModuleUpdates();
                           }}>
                             <div className="form-floating mb-4 mt-2">
-                            <select
-                              className="form-select form-control"
-                              id="floatingSelectGrid"
-                              aria-label="Floating label select example"
-                              name="technology"
-                              value={techDetail}
-                              onChange={handleSelectChange}
-                            >
-                              <option value="">Select Technology</option>
-                              {Array.isArray(technologies) &&
-                                technologies.length > 0 ? (
-                                technologies.map((tech) => (
-                                  <option key={tech.id} value={tech.id}>
-                                    {tech.technology}
+                              <select
+                                className="form-select form-control"
+                                id="floatingSelectGrid"
+                                aria-label="Floating label select example"
+                                name="technology"
+                                value={techDetail}
+                                onChange={handleSelectChange}
+                              >
+                                <option value="">Select Technology</option>
+                                {Array.isArray(technologies) &&
+                                  technologies.length > 0 ? (
+                                  technologies.map((tech) => (
+                                    <option key={tech.id} value={tech.id}>
+                                      {tech.technology}
+                                    </option>
+                                  ))
+                                ) : (
+                                  <option value="" disabled>
+                                    No Module Available
                                   </option>
-                                ))
-                              ) : (
-                                <option value="" disabled>
-                                  No Module Available
-                                </option>
-                              )}
-                            </select>
+                                )}
+                              </select>
                               <label for="floatingSelectGrid">
                                 Select Technology
                               </label>
@@ -636,16 +656,15 @@ const handleIconClick = (id) => {
                       </td>
                     </tr>
                     {/* LODING MODULE ADDD */}
-                    {Array.isArray(userModules) && userModules.length > 0 ? (
-                      userModules.map((module, index) => (
+                    {Array.isArray(currentRecords) && currentRecords.length > 0 ? (
+                      currentRecords.map((module, index) => (
                         <tr key={module.id}>
-                          <th scope="row">{index + 1}</th>
+                          <th scope="row">{module.sequence_number}</th>
                           <td className="td-technology">{module.module}</td>
                           <td>{module.technology}</td>
                           <td>{module.hours_number}</td>
                           <td>$ {module.prize}</td>
                           <td>
-
                             <div className="icon-up-del">
                               <Link
                                 to={{ pathname: `/${module.id}` }}
@@ -665,7 +684,9 @@ const handleIconClick = (id) => {
                               </Link>
                             </div>
                           </td>
+                          <tr><td colSpan="6" style={{ textAlign: 'center' }}></td> </tr> 
                         </tr>
+                        
 
                       ))
                     ) : (
@@ -676,27 +697,29 @@ const handleIconClick = (id) => {
 
                   </tbody>
                 </table>
-                
                 <div className="pro-add-new px-0 mb-0 pt-3">
-                  <p>1 - 6 of 6</p>
+                  <p>
+                    {`Showing ${indexOfFirstRecord + 1} - ${indexOfLastRecord > userModules.length
+                      ? userModules.length
+                      : indexOfLastRecord
+                      } of ${userModules.length}`}
+                  </p>
                   <nav aria-label="...">
                     <ul className="pagination pagination-sm mb-0">
-                      <li className="page-item active" aria-current="page">
-                        <span className="page-link">1</span>
-                      </li>
-                      <li className="page-item">
-                        <a className="page-link" href="#">
-                          2
-                        </a>
-                      </li>
-                      <li className="page-item">
-                        <a className="page-link" href="#">
-                          3
-                        </a>
-                      </li>
+                      {pageNumbers.map((number) => (
+                        <li
+                          key={number}
+                          className={`page-item ${currentPage === number ? "active" : ""}`}
+                        >
+                          <button onClick={() => handlePageChange(number)} className="page-link">
+                            {number}
+                          </button>
+                        </li>
+                      ))}
                     </ul>
                   </nav>
                 </div>
+              
               </div>
             </div>
           </div>

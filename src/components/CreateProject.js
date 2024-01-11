@@ -4,6 +4,9 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import axios from "axios";
 import config from "./config";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
 
 const CreateProject = () => {
   const { baseURL } = config;
@@ -237,8 +240,8 @@ const CreateProject = () => {
             },
             body: JSON.stringify({
               type: "hourse",
-              technology_id: "66,56",
-              module_name: "Register API",
+              technology_id: "17,34,48",
+              module_name: "asd",
             }),
           }
         );
@@ -256,7 +259,20 @@ const CreateProject = () => {
     // Call the function to fetch data
     fetchData();
   }, []);
+  const handleDownloadPDF = () => {
+    const table = document.querySelector('.table');
 
+    html2canvas(table).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('landscape');
+
+      // Add an image to PDF
+      pdf.addImage(imgData, 'PNG', 10, 10, 190, 120);
+
+      // Save the PDF
+      pdf.save('table.pdf');
+    });
+  };
   return (
     <div>
       {<Sidebar />}
@@ -415,7 +431,7 @@ const CreateProject = () => {
                                   style={{ flexWrap: "wrap" }}
                                 >
                                   {data &&
-                                  Array.isArray(data.technology_names) ? (
+                                    Array.isArray(data.technology_names) ? (
                                     data.technology_names.map((tech) =>
                                       activeLinks.includes(
                                         tech.technology_name
@@ -462,8 +478,9 @@ const CreateProject = () => {
                                 <b>{data.module}</b>
                               </label>
                             </div>
-                          </div>  
+                          </div>
                           <div className="price-hours">
+                          <b>{data.module}</b>
                             <h3>{totalPrize}</h3>
                             <h4>{totalHours}</h4>
                           </div>
@@ -609,6 +626,12 @@ const CreateProject = () => {
                     <tfoot>
                       <tr className="last-tr-project">
                         <th></th>
+                        <td>
+                          <button style={buttonStyle} onClick={handleDownloadPDF}>Download PDF</button>
+                          <div>
+                            {/* <button onClick={handleDownloadPDF}>Download PDF</button> */}
+                          </div>
+                        </td>
                         <td>
                           <b>Net Subtotal :</b>
                         </td>
