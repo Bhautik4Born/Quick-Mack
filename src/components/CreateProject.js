@@ -221,6 +221,42 @@ const CreateProject = () => {
   // deleteModule(moduleIdToDelete);
   //
 
+  const [totalPrize, setTotalPrize] = useState("$0");
+  const [totalHours, setTotalHours] = useState("0");
+
+  useEffect(() => {
+    // Function to fetch data from the API
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://quickmake.graphiglow.in/api/ModuleTimeCalculation/calculate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: "hourse",
+              technology_id: "66,56",
+              module_name: "Register API",
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        // Update state with the received data
+        setTotalPrize(`$${data.total_prize}`);
+        setTotalHours(data.total_hours_number.toString());
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    // Call the function to fetch data
+    fetchData();
+  }, []);
+
   return (
     <div>
       {<Sidebar />}
@@ -426,10 +462,10 @@ const CreateProject = () => {
                                 <b>{data.module}</b>
                               </label>
                             </div>
-                          </div>
+                          </div>  
                           <div className="price-hours">
-                            <h3>${data.prize}</h3>
-                            <h4>{data.hours_number}</h4>
+                            <h3>{totalPrize}</h3>
+                            <h4>{totalHours}</h4>
                           </div>
                         </div>
                         <div className="five-tech" style={{ flexWrap: "wrap" }}>
