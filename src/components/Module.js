@@ -9,7 +9,7 @@ const Module = () => {
   const [technologies, setTechnologies] = useState([]);
   const [selectedTechnology, setSelectedTechnology] = useState("");
   const [moduleName, setModuleName] = useState("");
-  const [hoursNumber, setHoursNumber] = useState("");
+  const [hours_Number, setHoursNumber] = useState("");
   const [prize, setPrize] = useState("");
   const [responseMessage, setResponseMessage] = useState("");
 
@@ -52,7 +52,7 @@ const Module = () => {
     event.preventDefault();
     setSelectedTechnology(event.target.value);
   };
-
+// Add module....
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
@@ -69,7 +69,7 @@ const Module = () => {
           user_id: userId_2,
           technology_id: selectedTechnology,
           module: moduleName,
-          hours_number: parseInt(hoursNumber),
+          hours_number: parseInt(hours_number),
           prize: parseInt(prize),
         }),
       });
@@ -81,7 +81,7 @@ const Module = () => {
       const data = await response.json();
       if (data.message === "Data stored successfully!") {
         // Notify the user about successful module addition
-        alert("Module added successfully!");
+        alert("Module added successfully....!");
         window.location.href = "/Module"; // Redirect to Technology page
       } else {
         // Notify the user about other responses (not a successful addition)
@@ -242,9 +242,9 @@ const handleIconClick = (id) => {
     }
   };
  
+ 
 
 
-  
   return (
     <div>
       {<Sidebar />}
@@ -397,6 +397,7 @@ const handleIconClick = (id) => {
 
                 {/* <!--End Add Modal --> */}
                 {/* <!-- Edit Modal --> */}
+                
                 <div
                   className="modal fade"
                   id="exampleModaledit"

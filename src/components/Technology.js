@@ -143,7 +143,7 @@ const Membership = () => {
   //updateeDetail ...
   const [selectedTechId, setSelectedTechId] = useState(null);
   const [techDetail, setTechDetail] = useState(null);
-  const [hours, setHourse] = useState(null);
+  const [hourse, setHourse] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -164,9 +164,9 @@ const Membership = () => {
 
         const RData = await response.json();
         if (RData && RData.technology) {
-          const { technology, hours } = RData.technology;
+          const { technology, hourse } = RData.technology;
           setTechDetail(technology);
-          setHourse(hours);
+          setHourse(hourse);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -194,7 +194,7 @@ const Membership = () => {
         body: JSON.stringify({
           technology_id: selectedTechId,
           technology: techDetail,
-          hours: hours,
+          hours: hourse,
         }),
       });
 
@@ -384,7 +384,7 @@ const Membership = () => {
                                 className="form-control"
                                 id="hoursInput"
                                 placeholder="Per Hours Rate"
-                                value={hours}
+                                value={hourse}
                                 onChange={(e) => setHourse(e.target.value)}
                               />
                               <label htmlFor="hoursInput">Per Hours Rate</label>
