@@ -10,7 +10,7 @@ import html2canvas from 'html2canvas';
 
 const CreateProject = () => {
   const { baseURL } = config;
-  const [activeLinks, setActiveLinks] = useState([]);
+  // const [activeLinks, setActiveLinks] = useState([]);
   const [conferenceData, setConferenceData] = useState([]);
   const [client_name, setClient_name] = useState([]);
   const [project_name, setProject_name] = useState([]);
@@ -93,15 +93,15 @@ const CreateProject = () => {
     setProject_name(event.target.value);
   };
 
-  const handleLinkClick = (tech) => {
-    console.log("Clicked:", tech);
-    setActiveLinks((prevActiveLinks) =>
-      prevActiveLinks.includes(tech)
-        ? prevActiveLinks.filter((link) => link !== tech)
-        : [...prevActiveLinks, tech]
-    );
-    console.log("Active Links:", activeLinks);
-  };
+  // const handleLinkClick = (tech) => {
+  //   console.log("Clicked:", tech);
+  //   setActiveLinks((prevActiveLinks) =>
+  //     prevActiveLinks.includes(tech)
+  //       ? prevActiveLinks.filter((link) => link !== tech)
+  //       : [...prevActiveLinks, tech]
+  //   );
+  //   console.log("Active Links:", activeLinks);
+  // };
 
   useEffect(() => {
     // Function to fetch data from the API
@@ -224,41 +224,7 @@ const CreateProject = () => {
   // deleteModule(moduleIdToDelete);
   //
 
-  const [totalPrize, setTotalPrize] = useState("$0");
-  const [totalHours, setTotalHours] = useState("0");
 
-  useEffect(() => {
-    // Function to fetch data from the API
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://quickmake.graphiglow.in/api/ModuleTimeCalculation/calculate",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              type: "hourse",
-              technology_id: "17,34,48",
-              module_name: "asd",
-            }),
-          }
-        );
-
-        const data = await response.json();
-
-        // Update state with the received data
-        setTotalPrize(`$${data.total_prize}`);
-        setTotalHours(data.total_hours_number.toString());
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    // Call the function to fetch data
-    fetchData();
-  }, []);
   const handleDownloadPDF = () => {
     const table = document.querySelector('.table');
 
@@ -273,6 +239,79 @@ const CreateProject = () => {
       pdf.save('table.pdf');
     });
   };
+
+  const [activeLinks, setActiveLinks] = useState([]);
+  const [selectedTechnology, setSelectedTechnology] = useState(null);
+
+  // const data = { technology_names: [...] }; // Replace [...] with your actual technology data
+
+  // const [activeLinks, setActiveLinks] = useState([]);
+  const [selectedTechnologies, setSelectedTechnologies] = useState([]);
+
+  // const data = { technology_names: [...] }; // Replace [...] with your actual technology data
+
+    // ... (Your existing code)
+
+    const handleLinkClick = (tech) => {
+      console.log("Clicked:", tech);
+  
+      // Toggle the selection of the clicked technology
+      setActiveLinks((prevActiveLinks) =>
+        prevActiveLinks.includes(tech.technology_name)
+          ? prevActiveLinks.filter((link) => link !== tech.technology_name)
+          : [...prevActiveLinks, tech.technology_name]
+      );
+  
+      // Update the selected technologies list
+      setSelectedTechnologies((prevSelectedTechnologies) =>
+        prevSelectedTechnologies.includes(tech.technology_ID)
+          ? prevSelectedTechnologies.filter((id) => id !== tech.technology_ID)
+          : [...prevSelectedTechnologies, tech.technology_ID]
+      );
+  
+      console.log("Active Links:", activeLinks);
+      console.log("Selected Technologies:", selectedTechnologies);
+    };
+  
+    const selectedTechnologiesString = selectedTechnologies.join(',');
+  
+    const [totalPrize, setTotalPrize] = useState("$0");
+    const [totalHours, setTotalHours] = useState("0");
+  
+    useEffect(() => {
+      // Function to fetch data from the API
+      const fetchData = async () => {
+        try {
+          const response = await fetch(
+            "https://quickmake.graphiglow.in/api/ModuleTimeCalculation/calculate",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                type: "hourse",
+                technology_id: selectedTechnologiesString,
+                module_name:"123",
+              }),
+            }
+          );
+  
+          const data = await response.json();
+  
+          // Update state with the received data
+          setTotalPrize(`$${data.total_prize}`);
+          setTotalHours(data.total_hours_number.toString());
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+  
+      // Call the function to fetch data
+      fetchData();
+    }, [selectedTechnologiesString ]); // Include selectedTechnologiesString in the dependency array
+  
+
   return (
     <div>
       {<Sidebar />}
@@ -480,32 +519,35 @@ const CreateProject = () => {
                             </div>
                           </div>
                           <div className="price-hours">
-                          <b>{data.module}</b>
+                            <b>{data.module}</b>
                             <h3>{totalPrize}</h3>
                             <h4>{totalHours}</h4>
                           </div>
                         </div>
-                        <div className="five-tech" style={{ flexWrap: "wrap" }}>
-                          {data && Array.isArray(data.technology_names) ? (
-                            data.technology_names.map((tech) => (
-                              <p key={tech.technology_ID}>
-                                <a
-                                  // href="#"
-                                  className={
-                                    activeLinks.includes(tech.technology_name)
-                                      ? "active"
-                                      : ""
-                                  }
-                                  onClick={() =>
-                                    handleLinkClick(tech.technology_name)
-                                  }
-                                >
-                                  {tech.technology_name}
-                                </a>
-                              </p>
-                            ))
-                          ) : (
-                            <p>No technology names available</p>
+                        <div>
+                          <div className="five-tech" style={{ flexWrap: "wrap" }}>
+                            {data && Array.isArray(data.technology_names) ? (
+                              data.technology_names.map((tech) => (
+                                <p key={tech.technology_ID}>
+                                  <a
+                                    className={activeLinks.includes(tech.technology_name) ? "active" : ""}
+                                    onClick={() => handleLinkClick(tech)}
+                                  >
+                                    {tech.technology_name}
+                                  </a>
+                                </p>
+                              ))
+                            ) : (
+                              <p>No technology names available</p>
+                            )}
+                          </div>
+
+                          {selectedTechnologies.length > 0 && (
+                            <div>
+                              {/* <h2>Selected Technology IDs</h2> */}
+                              <p>{selectedTechnologiesString}</p>
+                              {/* You can also display additional details if needed */}
+                            </div>
                           )}
                         </div>
                       </div>
