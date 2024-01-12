@@ -275,7 +275,7 @@ const CreateProject = () => {
   
     const selectedTechnologiesString = selectedTechnologies.join(',');
   
-    const [totalPrize, setTotalPrize] = useState("$0");
+    const [totalPrize, setTotalPrize] = useState("0");
     const [totalHours, setTotalHours] = useState("0");
   
     useEffect(() => {
@@ -494,7 +494,7 @@ const CreateProject = () => {
                                             {tech.technology_name}
                                           </button>
                                         </p>
-                                      ) : null
+                                      ) : 0
                                     )
                                   ) : (
                                     <p>No technology names available</p>

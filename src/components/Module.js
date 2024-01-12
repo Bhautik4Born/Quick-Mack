@@ -98,44 +98,54 @@ const Module = () => {
   const [totalRecords, setTotalRecords] = useState(0);
   const [userModules, setUserModules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const user_Id = document.cookie.replace(
-          /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
-          "$1"
-        );
-        const userId = user_Id; // Replace with your user ID retrieval logic
+  const [selectedTechIdFilter, setSelectedTechIdFilter] = useState('');
 
-        const response = await fetch(`${baseURL}api/UserModle/getUserModule`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ user_id: userId }),
-        });
+  const handleFilter = (technologies) => {
+    setSelectedTechnologies(technologies);
+    setSelectedTechIdFilter(technologies.join(','));
+  };
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
+  const fetchData = async () => {
+    try {
+      const user_Id = document.cookie.replace(
+        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+        '$1'
+      );
+      const userId = user_Id; // Replace with your user ID retrieval logic
 
-        const responseData = await response.json();
-        if (responseData && responseData.total_records) {
-          setTotalRecords(responseData.total_records);
-        }
+      const response = await fetch(`${baseURL}api/UserModle/getUserModule`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: userId, Filtertechnology: selectedTechIdFilter }),
+      });
 
-        if (responseData && responseData.data) {
-          setUserModules(responseData.data);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setIsLoading(false);
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
       }
-    };
 
+      const responseData = await response.json();
+      if (responseData && responseData.total_records) {
+        setTotalRecords(responseData.total_records);
+      }
+
+      if (responseData && responseData.data) {
+        setUserModules(responseData.data);
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, [selectedTechIdFilter]);
+
+
+
 
   const [deleteResponse, setDeleteResponse] = useState(null);
 
@@ -224,7 +234,7 @@ const Module = () => {
           Technology_id: techDetail,
           hours_number: hours_number,
           prize: prize,
-          
+
 
         }),
       });
@@ -260,7 +270,22 @@ const Module = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+  const [selectedTechnologies, setSelectedTechnologies] = useState([]);
 
+
+
+  const handleCheckboxChange = (event) => {
+    const selectedTechnology = event.target.value;
+    setSelectedTechnologies((prevSelected) => {
+      if (prevSelected.includes(selectedTechnology)) {
+        // If already selected, remove it
+        return prevSelected.filter((id) => id !== selectedTechnology);
+      } else {
+        // If not selected, add it
+        return [...prevSelected, selectedTechnology];
+      }
+    });
+  };
 
 
 
@@ -445,28 +470,28 @@ const Module = () => {
                             ModuleUpdates();
                           }}>
                             <div className="form-floating mb-4 mt-2">
-                               <select
-                              className="form-select form-control"
-                              id="floatingSelectGrid"
-                              aria-label="Floating label select example"
-                              name="technology"
-                              value={techDetail}
-                              onChange={(e) => setTechDetail(e.target.value)}
-                            >
-                               <option value="">Select Technology</option>
-                              {Array.isArray(technologies) &&
-                                technologies.length > 0 ? (
-                                technologies.map((tech) => (
-                                  <option key={tech.id} value={tech.id}>
-                                    {tech.technology}
+                              <select
+                                className="form-select form-control"
+                                id="floatingSelectGrid"
+                                aria-label="Floating label select example"
+                                name="technology"
+                                value={techDetail}
+                                onChange={(e) => setTechDetail(e.target.value)}
+                              >
+                                <option value="">Select Technology</option>
+                                {Array.isArray(technologies) &&
+                                  technologies.length > 0 ? (
+                                  technologies.map((tech) => (
+                                    <option key={tech.id} value={tech.id}>
+                                      {tech.technology}
+                                    </option>
+                                  ))
+                                ) : (
+                                  <option value="" disabled>
+                                    No Module Available
                                   </option>
-                                ))
-                              ) : (
-                                <option value="" disabled>
-                                  No Module Available
-                                </option>
-                              )}
-                            </select>
+                                )}
+                              </select>
                               <label for="floatingSelectGrid">
                                 Select Technology
                               </label>
@@ -539,54 +564,35 @@ const Module = () => {
                         <h5 className="modal-title" id="exampleModalLabel">
                           Apply Filter
                         </h5>
-                        <button
-                          type="button"
-                          className="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
                       </div>
                       <div className="modal-body">
                         <div className="user-details">
-                          <div className="form-check mb-3">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckDefault"
-                            />
-                            <label
-                              className="form-check-label"
-                              for="flexCheckDefault"
-                            >
-                              Native Android
-                            </label>
-                          </div>
-                          <div className="form-check mb-3">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckChecked"
-                            />
-                            <label
-                              className="form-check-label"
-                              for="flexCheckChecked"
-                            >
-                              Native Android
-                            </label>
-                          </div>
+                          {Array.isArray(technologies) && technologies.length > 0 ? (
+                            technologies.map((tech) => (
+                              <div key={tech.id} className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id={`technology-${tech.id}`}
+                                  value={tech.id}
+                                  checked={selectedTechnologies.includes(tech.id)}
+                                  onChange={handleCheckboxChange}
+                                />
+                                <label className="flexCheckChecked    " htmlFor={`technology-${tech.id}`}>
+                                  {tech.technology}
+                                </label>
+                              </div>
+                            ))
+                          ) : (
+                            <p>No Modules Available</p>
+                          )}
+                          <p>Selected Technologies: {selectedTechnologies.join(", ")}</p>
+
                           <div className="upload-reset-btn mb-0 justify-content-center pt-2">
-                            <button
-                              className="btn btn-reset"
-                              data-bs-dismiss="modal"
-                            >
+                            <button className="btn btn-reset" data-bs-dismiss="modal">
                               Cancel
                             </button>
-                            <button
-                              className="btn btn-upload me-0"
-                              data-bs-dismiss="modal"
-                            >
+                            <button className="btn btn-upload me-0" data-bs-dismiss="modal" onClick={() => handleFilter(selectedTechnologies)} >
                               Apply Filter
                             </button>
                           </div>
@@ -684,9 +690,9 @@ const Module = () => {
                               </Link>
                             </div>
                           </td>
-                          <tr><td colSpan="6" style={{ textAlign: 'center' }}></td> </tr> 
+                          <tr><td colSpan="6" style={{ textAlign: 'center' }}></td> </tr>
                         </tr>
-                        
+
 
                       ))
                     ) : (
@@ -719,7 +725,7 @@ const Module = () => {
                     </ul>
                   </nav>
                 </div>
-              
+
               </div>
             </div>
           </div>
