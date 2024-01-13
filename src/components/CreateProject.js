@@ -277,6 +277,7 @@ const CreateProject = () => {
   
     const [totalPrize, setTotalPrize] = useState("0");
     const [totalHours, setTotalHours] = useState("0");
+    const [moduleName, setModuleName] = useState("");
   
     useEffect(() => {
       // Function to fetch data from the API
@@ -292,7 +293,7 @@ const CreateProject = () => {
               body: JSON.stringify({
                 type: "hourse",
                 technology_id: selectedTechnologiesString,
-                module_name:"123",
+                module_name:moduleName,
               }),
             }
           );
@@ -519,7 +520,7 @@ const CreateProject = () => {
                             </div>
                           </div>
                           <div className="price-hours">
-                            <b>{data.module}</b>
+                            <b>{data.moduleName}</b>
                             <h3>{totalPrize}</h3>
                             <h4>{totalHours}</h4>
                           </div>
