@@ -293,7 +293,7 @@ const CreateProject = () => {
               body: JSON.stringify({
                 type: "hourse",
                 technology_id: selectedTechnologiesString,
-                module_name:moduleName,
+                module_name:"email",
               }),
             }
           );
@@ -520,7 +520,7 @@ const CreateProject = () => {
                             </div>
                           </div>
                           <div className="price-hours">
-                            <b>{data.moduleName}</b>
+                            <b>{data.module}</b>
                             <h3>{totalPrize}</h3>
                             <h4>{totalHours}</h4>
                           </div>
