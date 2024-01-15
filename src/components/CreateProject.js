@@ -520,12 +520,13 @@ const CreateProject = () => {
                             </div>
                           </div>
                           <div className="price-hours">
-                            <b>{data.moduleName}</b>
+                            <b>{data.module}</b>
                             <h3>{totalPrize}</h3>
                             <h4>{totalHours}</h4>
                           </div>
                         </div>
                         <div>
+                        <b>{data.module}</b>
                           <div className="five-tech" style={{ flexWrap: "wrap" }}>
                             {data && Array.isArray(data.technology_names) ? (
                               data.technology_names.map((tech) => (
