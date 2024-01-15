@@ -223,17 +223,23 @@ const CreateProject = () => {
   // Replace 'moduleIdToDelete' with the actual ID of the module you want to delete
   // deleteModule(moduleIdToDelete);
   //
+  const imageUrl = 'https://4born.info/assets/img/images/4Born_Solution.png';
 
 
   const handleDownloadPDF = () => {
+    const image = new Image();
+    image.src = imageUrl;
     const table = document.querySelector('.table');
 
     html2canvas(table).then((canvas) => {
+
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('landscape');
 
       // Add an image to PDF
-      pdf.addImage(imgData, 'PNG', 10, 10, 190, 120);
+      pdf.addImage(imgData, 'PNG', 30, 50, 190, 120);
+
+
 
       // Save the PDF
       pdf.save('table.pdf');
@@ -250,76 +256,150 @@ const CreateProject = () => {
 
   // const data = { technology_names: [...] }; // Replace [...] with your actual technology data
 
-    // ... (Your existing code)
+  // ... (Your existing code)
 
-    const handleLinkClick = (tech) => {
-      console.log("Clicked:", tech);
-  
-      // Toggle the selection of the clicked technology
-      setActiveLinks((prevActiveLinks) =>
-        prevActiveLinks.includes(tech.technology_name)
-          ? prevActiveLinks.filter((link) => link !== tech.technology_name)
-          : [...prevActiveLinks, tech.technology_name]
-      );
-  
-      // Update the selected technologies list
-      setSelectedTechnologies((prevSelectedTechnologies) =>
-        prevSelectedTechnologies.includes(tech.technology_ID)
-          ? prevSelectedTechnologies.filter((id) => id !== tech.technology_ID)
-          : [...prevSelectedTechnologies, tech.technology_ID]
-      );
-  
-      console.log("Active Links:", activeLinks);
-      console.log("Selected Technologies:", selectedTechnologies);
+  const handleLinkClick = (tech) => {
+    console.log("Clicked:", tech);
+
+    // Toggle the selection of the clicked technology
+    setActiveLinks((prevActiveLinks) =>
+      prevActiveLinks.includes(tech.technology_name)
+        ? prevActiveLinks.filter((link) => link !== tech.technology_name)
+        : [...prevActiveLinks, tech.technology_name]
+    );
+
+    // Update the selected technologies list
+    setSelectedTechnologies((prevSelectedTechnologies) =>
+      prevSelectedTechnologies.includes(tech.technology_ID)
+        ? prevSelectedTechnologies.filter((id) => id !== tech.technology_ID)
+        : [...prevSelectedTechnologies, tech.technology_ID]
+    );
+
+    console.log("Active Links:", activeLinks);
+    console.log("Selected Technologies:", selectedTechnologies);
+  };
+
+  const selectedTechnologiesString = selectedTechnologies.join(',');
+
+  const [totalPrize, setTotalPrize] = useState("0");
+  const [totalHours, setTotalHours] = useState("0");
+
+  useEffect(() => {
+    // Function to fetch data from the API
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://quickmake.graphiglow.in/api/ModuleTimeCalculation/calculate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: "hourse",
+              technology_id: selectedTechnologiesString,
+              module_name: "email",
+            }),
+          }
+        );
+
+        const data = await response.json();
+
+        // Update state with the received data
+        setTotalPrize(`$${data.total_prize}`);
+        setTotalHours(data.total_hours_number.toString());
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
-  
-    const selectedTechnologiesString = selectedTechnologies.join(',');
-  
-    const [totalPrize, setTotalPrize] = useState("0");
-    const [totalHours, setTotalHours] = useState("0");
-  
-    useEffect(() => {
-      // Function to fetch data from the API
-      const fetchData = async () => {
-        try {
-          const response = await fetch(
-            "https://quickmake.graphiglow.in/api/ModuleTimeCalculation/calculate",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                type: "hourse",
-                technology_id: selectedTechnologiesString,
-                module_name:"123",
-              }),
-            }
-          );
-  
-          const data = await response.json();
-  
-          // Update state with the received data
-          setTotalPrize(`$${data.total_prize}`);
-          setTotalHours(data.total_hours_number.toString());
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-  
-      // Call the function to fetch data
-      fetchData();
-    }, [selectedTechnologiesString ]); // Include selectedTechnologiesString in the dependency array
-  
 
+    // Call the function to fetch data
+    fetchData();
+  }, [selectedTechnologiesString]); // Include selectedTechnologiesString in the dependency array
+
+  const [id, setId] = useState();
+  const [userModules, setUserModules] = useState([]);
+  const [selectedTechIdFilter, setSelectedTechIdFilter] = useState('');
+
+
+
+  
+  const handleFilter = (userModules) => {
+    setSelectedTechnologies(userModules);
+    setSelectedTechIdFilter(userModules.join(','));
+  };
+
+
+  const fetchDatas = async () => {
+    try {
+      const user_Id = document.cookie.replace(
+        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+        '$1'
+      );
+      const userId = user_Id; // Replace with your user ID retrieval logic
+
+      const response = await fetch(`${baseURL}api/UserTechnologies/getUserTechnologies`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ user_id: userId,Filtertechnology:"194" }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch data');
+      }
+
+
+      const data = await response.json();
+      setUserModules(data.data);
+
+      // const responseData = await response.json();
+      // if (responseData && responseData.id) {
+      //   setId(responseData.id);
+      // }
+
+      // if (responseData && responseData.data) {
+      //   setUserModules(responseData.data);
+      // }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchDatas();
+  }, [selectedTechIdFilter]);
+
+
+
+  const handleCheckboxChange = (event) => {
+    const selectedTechnology = event.target.value;
+    setSelectedTechnologies((prevSelected) => {
+      if (prevSelected.includes(selectedTechnology)) {
+        // If already selected, remove it
+        return prevSelected.filter((id) => id !== selectedTechnology);
+      } else {
+        // If not selected, add it
+        return [...prevSelected, userModules];
+      }
+    });
+  };
+  
   return (
     <div>
+
       {<Sidebar />}
+
       <div className="asside">
+
         <div className="about-first">
           <div className="row">
             <div className="col-4 mb-24">
+
               <div className="bg-box-new h-auto mb-24">
+
                 <div className="pro-add-new">
                   <h4>Select Module</h4>
                   <Link type="button" className="btn add-new">
@@ -337,57 +417,36 @@ const CreateProject = () => {
                   <div className="modal-dialog modal-dialog-centered modal-sm">
                     <div className="modal-content">
                       <div className="modal-header">
-                        <h5 className="modal-title" id="exampleModalLabel">
-                          Apply Filter
-                        </h5>
-                        <button
-                          type="button"
-                          className="btn-close"
-                          data-bs-dismiss="modal"
-                          aria-label="Close"
-                        ></button>
+                      
                       </div>
                       <div className="modal-body">
                         <div className="user-details">
-                          <div className="form-check mb-3">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckDefault"
-                            />
-                            <label
-                              className="form-check-label"
-                              for="flexCheckDefault"
-                            >
-                              Native Android
-                            </label>
-                          </div>
-                          <div className="form-check mb-3">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckChecked"
-                            />
-                            <label
-                              className="form-check-label"
-                              for="flexCheckChecked"
-                            >
-                              Native Android
-                            </label>
-                          </div>
+                          {Array.isArray(userModules) && userModules.length > 0 ? (
+                            userModules.map((tech) => (
+                              <div key={tech.id} className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id={`technology-${tech.id}`}
+                                  value={tech.id}
+                                  checked={userModules.includes(tech.id)}
+                                onChange={handleCheckboxChange}
+                                />
+                                <label className="flexCheckChecked" htmlFor={`technology-${tech.id}`}>
+                                  {tech.technology}
+                                </label>
+                              </div>
+                            ))
+                          ) : (
+                            <p>No Modules Available</p>
+                          )}
+                          <p>{id}</p>
+
                           <div className="upload-reset-btn mb-0 justify-content-center pt-2">
-                            <button
-                              className="btn btn-reset"
-                              data-bs-dismiss="modal"
-                            >
+                            <button className="btn btn-reset" data-bs-dismiss="modal">
                               Cancel
                             </button>
-                            <button
-                              className="btn btn-upload me-0"
-                              data-bs-dismiss="modal"
-                            >
+                            <button className="btn btn-upload me-0" data-bs-dismiss="modal" onClick={() => handleFilter(selectedTechnologies)} >
                               Apply Filter
                             </button>
                           </div>
@@ -666,9 +725,12 @@ const CreateProject = () => {
                     </tbody>
 
                     <tfoot>
+                      {imageUrl && <img src={imageUrl} alt="4Born Solution" width="100" height="100" style={{ alignItems: "center", justifyContent: "center" }} />}
                       <tr className="last-tr-project">
+
                         <th></th>
                         <td>
+
                           <button style={buttonStyle} onClick={handleDownloadPDF}>Download PDF</button>
                           <div>
                             {/* <button onClick={handleDownloadPDF}>Download PDF</button> */}
