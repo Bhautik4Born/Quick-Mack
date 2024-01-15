@@ -244,6 +244,7 @@ const CreateProject = () => {
   };
 
   const [activeLinks, setActiveLinks] = useState([]);
+  const [moduleSelecSet, setModuleSelected] = useState([]);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
 
   // const data = { technology_names: [...] }; // Replace [...] with your actual technology data
@@ -255,8 +256,8 @@ const CreateProject = () => {
 
   // ... (Your existing code)
 
-  const handleLinkClick = (tech) => {
-    console.log("Clicked:", tech);
+  const handleLinkClick = (tech, data) => {
+    console.log("Clicked:", tech, data);
 
     // Toggle the selection of the clicked technology
     setActiveLinks((prevActiveLinks) =>
@@ -271,6 +272,16 @@ const CreateProject = () => {
         ? prevSelectedTechnologies.filter((id) => id !== tech.technology_ID)
         : [...prevSelectedTechnologies, tech.technology_ID]
     );
+    // Check if a module name is provided in the data
+    if (data && data.module) {
+      setModuleSelected(data.module);
+      // Perform some action based on the module
+      console.log("Module Name:", moduleSelecSet);
+
+      if (data.module === "exampleModule") {
+        console.log("Performing action for exampleModule");
+      }
+    }
 
     console.log("Active Links:", activeLinks);
     console.log("Selected Technologies:", selectedTechnologies);
@@ -281,6 +292,61 @@ const CreateProject = () => {
   const [totalPrize, setTotalPrize] = useState("0");
   const [totalHours, setTotalHours] = useState("0");
   const [moduleName, setModuleName] = useState("");
+  const [isHoursBased, setIsHoursBased] = useState(false);
+
+  useEffect(() => {
+    // Check if there is a value stored in cookies
+    const storedValue = getCookie('hoursBased');
+    if (storedValue !== null) {
+      setIsHoursBased(storedValue === 'on');
+    } else {
+      // If no value found in cookies, set default to off
+      setCookie('hoursBased', 'off');
+    }
+  }, []);
+
+  const handleCheckboxChange = () => {
+    setIsHoursBased((prevValue) => {
+      const newValue = !prevValue;
+
+      // Store the new value in cookies
+      setCookie('hoursBased', newValue ? 'on' : 'off');
+
+      return newValue;
+    });
+  };
+
+  console.log("Cookied" + isHoursBased)
+  // Helper function to get a cookie value
+const getCookie = (name) => {
+  const cookies = document.cookie.split('; ');
+  for (const cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.split('=');
+    if (cookieName === name) {
+      return cookieValue;
+    }
+  }
+  return null;
+};
+
+// Helper function to set a cookie value
+const setCookie = (name, value) => {
+  document.cookie = `${name}=${value}`;
+};
+
+let BasedOnHourse = document.cookie.replace(
+  /(?:(?:^|.*;\s*)hoursBased\s*=\s*([^;]*).*$)|^.*$/,
+  "$1"
+);
+if (BasedOnHourse === "off") {
+  BasedOnHourse = "normal"; // Fix the typo here if needed
+} else {
+  // If no value found in cookies, set default to "normal"
+  BasedOnHourse = "hourse";
+}
+console.log("Based On hourse: " + BasedOnHourse);
+
+
 
   useEffect(() => {
     // Function to fetch data from the API
@@ -294,9 +360,10 @@ const CreateProject = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              type: "hourse",
+              type: BasedOnHourse,
               technology_id: selectedTechnologiesString,
-              module_name: moduleNames,
+              // module_name: moduleNames,
+              module_name: moduleSelecSet,
             }),
             //  console.log(moduleNames);
           }
@@ -316,6 +383,7 @@ const CreateProject = () => {
     // Call the function to fetch data
     fetchData();
   }, [selectedTechnologiesString]); // Include selectedTechnologiesString in the dependency array
+
 
   return (
     <div>
@@ -547,7 +615,7 @@ const CreateProject = () => {
                                         ? "active"
                                         : ""
                                     }
-                                    onClick={() => handleLinkClick(tech)}
+                                    onClick={() => handleLinkClick(tech, data)}
                                   >
                                     {tech.technology_name}
                                   </a>
@@ -601,11 +669,10 @@ const CreateProject = () => {
                       />
                       <label for="floatingInput">Project Name</label>
                     </div>
-                    pdf
                     <div className="form-check form-switch me-2">
                       <label
                         className="form-check-label"
-                        for="flexSwitchCheckDefault"
+                        htmlFor="flexSwitchCheckDefault"
                       >
                         Base on Hours
                       </label>
@@ -613,6 +680,8 @@ const CreateProject = () => {
                         className="form-check-input"
                         type="checkbox"
                         id="flexSwitchCheckDefault"
+                        checked={isHoursBased}
+                        onChange={handleCheckboxChange}
                       />
                     </div>
                   </div>
