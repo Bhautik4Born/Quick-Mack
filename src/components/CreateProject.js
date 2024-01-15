@@ -306,7 +306,7 @@ const CreateProject = () => {
         const data = await response.json();
 
         // Update state with the received data
-        setTotalPrize(`${data.total_prize}`);
+        setTotalPrize(`$${data.total_prize}`);
         setTotalHours(data.total_hours_number.toString());
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -561,7 +561,7 @@ const CreateProject = () => {
                           {selectedTechnologies.length > 0 && (
                             <div>
                               {/* <h2>Selected Technology IDs</h2> */}
-                              <p>{selectedTechnologiesString}</p>
+                              {/* <p>{selectedTechnologiesString}</p> */}
                               {/* You can also display additional details if needed */}
                             </div>
                           )}
