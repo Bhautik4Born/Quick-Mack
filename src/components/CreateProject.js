@@ -293,7 +293,7 @@ const CreateProject = () => {
               body: JSON.stringify({
                 type: "hourse",
                 technology_id: selectedTechnologiesString,
-                module_name:moduleName,
+                module_name:"email",
               }),
             }
           );

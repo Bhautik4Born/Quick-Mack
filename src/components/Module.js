@@ -300,7 +300,7 @@ const Module = () => {
               <div className="bg-box">
                 <div className="pro-add-new px-0">
                   <p style={{ display: "flex" }}>
-                    Total  Module <span>
+                    Total Module<span>
                       <div>
                         {isLoading ? (
                           <p>Loading...</p>
@@ -645,16 +645,17 @@ const Module = () => {
                           {/* Conditional rendering based on isLoading */}
                           {isLoading ? (
                             <p style={{ textAlign: 'center' }}>Loading...</p>
-
                           ) : (
                             <div>
                               {/* Render your fetched data or component here */}
-                              {Array.isArray(technologies) && technologies.length > 0 ? (
-                                technologies.map((tech) => (
+                              {Array.isArray(totalRecords) && totalRecords.length > 0 ? (
+                                totalRecords.map((tech) => (
                                   <div key={tech.id}>{tech.name}</div>
                                 ))
                               ) : (
-                                <p style={{ textAlign: 'center' }}>No Module available</p>
+                                <p style={{ textAlign: 'center' }}>
+                                  {totalRecords.length > 0 ? 'No Module available' : ''}
+                                </p>
                               )}
                             </div>
                           )}
