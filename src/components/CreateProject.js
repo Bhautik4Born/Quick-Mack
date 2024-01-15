@@ -4,7 +4,8 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import axios from "axios";
 import config from "./config";
-
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 
 const CreateProject = () => {
@@ -225,7 +226,25 @@ const CreateProject = () => {
   const imageUrl = 'https://4born.info/assets/img/images/4Born_Solution.png';
 
 
-  
+  const handleDownloadPDF = () => {
+    const image = new Image();
+    image.src = imageUrl;
+    const table = document.querySelector('.table');
+
+    html2canvas(table).then((canvas) => {
+
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('landscape');
+
+      // Add an image to PDF
+      pdf.addImage(imgData, 'PNG', 30, 50, 190, 120);
+
+
+
+      // Save the PDF
+      pdf.save('table.pdf');
+    });
+  };
 
   const [activeLinks, setActiveLinks] = useState([]);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
@@ -324,7 +343,7 @@ const CreateProject = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ user_id: userId,Filtertechnology:"194" }),
+        body: JSON.stringify({ user_id: userId,Filtertechnology:selectedTechIdFilter }),
       });
 
       if (!response.ok) {
@@ -356,14 +375,14 @@ const CreateProject = () => {
 
 
   const handleCheckboxChange = (event) => {
-    const selectedTechnology = event.target.value;
+    const userModules = event.target.value;
     setSelectedTechnologies((prevSelected) => {
-      if (prevSelected.includes(selectedTechnology)) {
+      if (prevSelected.includes(selectedTechnolgy)) {
         // If already selected, remove it
         return prevSelected.filter((id) => id !== selectedTechnology);
       } else {
         // If not selected, add it
-        return [...prevSelected, userModules];
+        return [...prevSelected, selectedTechnology];
       }
     });
   };
@@ -712,7 +731,7 @@ const CreateProject = () => {
                         <th></th>
                         <td>
 
-                          <button>Download PDF</button>
+                          <button style={buttonStyle} onClick={handleDownloadPDF}>Download PDF</button>
                           <div>
                             {/* <button onClick={handleDownloadPDF}>Download PDF</button> */}
                           </div>
@@ -742,7 +761,5 @@ const CreateProject = () => {
     </div>
   );
 };
-
-
 
 export default CreateProject;

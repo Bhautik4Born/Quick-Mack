@@ -586,7 +586,7 @@ const Module = () => {
                           ) : (
                             <p>No Modules Available</p>
                           )}
-                          <p>Selected Technologies: {selectedTechnologies.join(", ")}</p>
+                          {/* <p>Selected Technologies: {selectedTechnologies.join(", ")}</p> */}
 
                           <div className="upload-reset-btn mb-0 justify-content-center pt-2">
                             <button className="btn btn-reset" data-bs-dismiss="modal">
