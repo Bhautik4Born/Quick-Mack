@@ -4,9 +4,8 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import axios from "axios";
 import config from "./config";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const CreateProject = () => {
   const { baseURL } = config;
@@ -15,6 +14,7 @@ const CreateProject = () => {
   const [client_name, setClient_name] = useState([]);
   const [project_name, setProject_name] = useState([]);
   const [responseMessage, setResponseMessage] = useState("");
+  const [moduleNames, setModuleNames] = useState([]);
 
   const userId = document.cookie.replace(
     /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
@@ -119,6 +119,10 @@ const CreateProject = () => {
 
         // Update the conferenceData state with the fetched data
         setConferenceData(response.data.data);
+
+        // Extract module names from the API response
+        const modules = response.data.data.map((item) => item.module);
+        setModuleNames(modules);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -224,19 +228,18 @@ const CreateProject = () => {
   // deleteModule(moduleIdToDelete);
   //
 
-
   const handleDownloadPDF = () => {
-    const table = document.querySelector('.table');
+    const table = document.querySelector(".table");
 
     html2canvas(table).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('landscape');
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("landscape");
 
       // Add an image to PDF
-      pdf.addImage(imgData, 'PNG', 10, 10, 190, 120);
+      pdf.addImage(imgData, "PNG", 10, 10, 190, 120);
 
       // Save the PDF
-      pdf.save('table.pdf');
+      pdf.save("table.pdf");
     });
   };
 
@@ -250,68 +253,69 @@ const CreateProject = () => {
 
   // const data = { technology_names: [...] }; // Replace [...] with your actual technology data
 
-    // ... (Your existing code)
+  // ... (Your existing code)
 
-    const handleLinkClick = (tech) => {
-      console.log("Clicked:", tech);
-  
-      // Toggle the selection of the clicked technology
-      setActiveLinks((prevActiveLinks) =>
-        prevActiveLinks.includes(tech.technology_name)
-          ? prevActiveLinks.filter((link) => link !== tech.technology_name)
-          : [...prevActiveLinks, tech.technology_name]
-      );
-  
-      // Update the selected technologies list
-      setSelectedTechnologies((prevSelectedTechnologies) =>
-        prevSelectedTechnologies.includes(tech.technology_ID)
-          ? prevSelectedTechnologies.filter((id) => id !== tech.technology_ID)
-          : [...prevSelectedTechnologies, tech.technology_ID]
-      );
-  
-      console.log("Active Links:", activeLinks);
-      console.log("Selected Technologies:", selectedTechnologies);
+  const handleLinkClick = (tech) => {
+    console.log("Clicked:", tech);
+
+    // Toggle the selection of the clicked technology
+    setActiveLinks((prevActiveLinks) =>
+      prevActiveLinks.includes(tech.technology_name)
+        ? prevActiveLinks.filter((link) => link !== tech.technology_name)
+        : [...prevActiveLinks, tech.technology_name]
+    );
+
+    // Update the selected technologies list
+    setSelectedTechnologies((prevSelectedTechnologies) =>
+      prevSelectedTechnologies.includes(tech.technology_ID)
+        ? prevSelectedTechnologies.filter((id) => id !== tech.technology_ID)
+        : [...prevSelectedTechnologies, tech.technology_ID]
+    );
+
+    console.log("Active Links:", activeLinks);
+    console.log("Selected Technologies:", selectedTechnologies);
+  };
+
+  const selectedTechnologiesString = selectedTechnologies.join(",");
+
+  const [totalPrize, setTotalPrize] = useState("0");
+  const [totalHours, setTotalHours] = useState("0");
+  const [moduleName, setModuleName] = useState("");
+
+  useEffect(() => {
+    // Function to fetch data from the API
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://quickmake.graphiglow.in/api/ModuleTimeCalculation/calculate",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: "hourse",
+              technology_id: selectedTechnologiesString,
+              module_name: moduleNames,
+            }),
+            //  console.log(moduleNames);
+          }
+        );
+        // console.log("module Names:", moduleNames);
+
+        const data = await response.json();
+
+        // Update state with the received data
+        setTotalPrize(`${data.total_prize}`);
+        setTotalHours(data.total_hours_number.toString());
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
     };
-  
-    const selectedTechnologiesString = selectedTechnologies.join(',');
-  
-    const [totalPrize, setTotalPrize] = useState("0");
-    const [totalHours, setTotalHours] = useState("0");
-    const [moduleName, setModuleName] = useState("");
-  
-    useEffect(() => {
-      // Function to fetch data from the API
-      const fetchData = async () => {
-        try {
-          const response = await fetch(
-            "https://quickmake.graphiglow.in/api/ModuleTimeCalculation/calculate",
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                type: "hourse",
-                technology_id: selectedTechnologiesString,
-                module_name:"email",
-              }),
-            }
-          );
-  
-          const data = await response.json();
-  
-          // Update state with the received data
-          setTotalPrize(`$${data.total_prize}`);
-          setTotalHours(data.total_hours_number.toString());
-        } catch (error) {
-          console.error("Error fetching data:", error);
-        }
-      };
-  
-      // Call the function to fetch data
-      fetchData();
-    }, [selectedTechnologiesString ]); // Include selectedTechnologiesString in the dependency array
-  
+
+    // Call the function to fetch data
+    fetchData();
+  }, [selectedTechnologiesString]); // Include selectedTechnologiesString in the dependency array
 
   return (
     <div>
@@ -471,7 +475,7 @@ const CreateProject = () => {
                                   style={{ flexWrap: "wrap" }}
                                 >
                                   {data &&
-                                    Array.isArray(data.technology_names) ? (
+                                  Array.isArray(data.technology_names) ? (
                                     data.technology_names.map((tech) =>
                                       activeLinks.includes(
                                         tech.technology_name
@@ -495,7 +499,9 @@ const CreateProject = () => {
                                             {tech.technology_name}
                                           </button>
                                         </p>
-                                      ) : 0
+                                      ) : (
+                                        <p></p>
+                                      )
                                     )
                                   ) : (
                                     <p>No technology names available</p>
@@ -520,19 +526,27 @@ const CreateProject = () => {
                             </div>
                           </div>
                           <div className="price-hours">
-                            <b>{data.module}</b>
+                            {/* <b>Module :-{moduleNames}</b> */}
                             <h3>{totalPrize}</h3>
                             <h4>{totalHours}</h4>
                           </div>
                         </div>
                         <div>
-                        <b>{data.module}</b>
-                          <div className="five-tech" style={{ flexWrap: "wrap" }}>
+                          {/* <b>{data.module}</b> */}
+                          <div
+                            className="five-tech"
+                            style={{ flexWrap: "wrap" }}
+                          >
                             {data && Array.isArray(data.technology_names) ? (
                               data.technology_names.map((tech) => (
                                 <p key={tech.technology_ID}>
+                                  {/* <b>Module :-{moduleNames}</b> */}
                                   <a
-                                    className={activeLinks.includes(tech.technology_name) ? "active" : ""}
+                                    className={
+                                      activeLinks.includes(tech.technology_name)
+                                        ? "active"
+                                        : ""
+                                    }
                                     onClick={() => handleLinkClick(tech)}
                                   >
                                     {tech.technology_name}
@@ -586,7 +600,8 @@ const CreateProject = () => {
                         onChange={handleproject}
                       />
                       <label for="floatingInput">Project Name</label>
-                    </div>pdf
+                    </div>
+                    pdf
                     <div className="form-check form-switch me-2">
                       <label
                         className="form-check-label"
@@ -671,7 +686,12 @@ const CreateProject = () => {
                       <tr className="last-tr-project">
                         <th></th>
                         <td>
-                          <button style={buttonStyle} onClick={handleDownloadPDF}>Download PDF</button>
+                          <button
+                            style={buttonStyle}
+                            onClick={handleDownloadPDF}
+                          >
+                            Download PDF
+                          </button>
                           <div>
                             {/* <button onClick={handleDownloadPDF}>Download PDF</button> */}
                           </div>
