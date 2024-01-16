@@ -103,6 +103,9 @@ const CreateProject = () => {
   //   console.log("Active Links:", activeLinks);
   // };
 
+  
+  const [isHoursBased, setIsHoursBased] = useState(false);
+
   useEffect(() => {
     // Function to fetch data from the API
     const fetchData = async () => {
@@ -132,6 +135,60 @@ const CreateProject = () => {
     fetchData();
   }, []); // Empty dependency array ensures this effect runs only once
 
+  useEffect(() => {
+    // Check if there is a value stored in cookies
+    const storedValue = getCookie("hoursBased");
+    if (storedValue !== null) {
+      setIsHoursBased(storedValue === "on");
+    } else {
+      // If no value found in cookies, set default to off
+      setCookie("hoursBased", "off");
+    }
+  }, []);
+
+  const handleCheckboxChange = () => {
+    setIsHoursBased((prevValue) => {
+      const newValue = !prevValue;
+
+      // Store the new value in cookies
+      setCookie("hoursBased", newValue ? "on" : "off");
+
+      return newValue;
+    });
+  };
+
+  console.log("Cookied" + isHoursBased);
+  // Helper function to get a cookie value
+  const getCookie = (name) => {
+    const cookies = document.cookie.split("; ");
+    for (const cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split("=");
+      if (cookieName === name) {
+        return cookieValue;
+      }
+    }
+    return null;
+  };
+
+  // Helper function to set a cookie value
+  const setCookie = (name, value) => {
+    document.cookie = `${name}=${value}`;
+        window.location.href = `/CreateProject/?projectId=${retrievedProjectId}`; // Redirect to home page
+      
+  };
+
+  let BasedOnHourse = document.cookie.replace(
+    /(?:(?:^|.*;\s*)hoursBased\s*=\s*([^;]*).*$)|^.*$/,
+    "$1"
+  );
+  if (BasedOnHourse === "off") {
+    BasedOnHourse = "normal"; // Fix the typo here if needed
+  } else {
+    // If no value found in cookies, set default to "normal"
+    BasedOnHourse = "hourse";
+  }
+  console.log("Based On hourse: " + BasedOnHourse);
+
   const { productID } = useParams(); // Assuming 'productID' is the parameter name
 
   const [data, setData] = useState([]);
@@ -158,6 +215,7 @@ const CreateProject = () => {
             body: JSON.stringify({
               user_id: userId_2,
               project_id: retrievedProjectId,
+              type: BasedOnHourse,
             }),
           }
         );
@@ -292,61 +350,6 @@ const CreateProject = () => {
   const [totalPrize, setTotalPrize] = useState("0");
   const [totalHours, setTotalHours] = useState("0");
   const [moduleName, setModuleName] = useState("");
-  const [isHoursBased, setIsHoursBased] = useState(false);
-
-  useEffect(() => {
-    // Check if there is a value stored in cookies
-    const storedValue = getCookie('hoursBased');
-    if (storedValue !== null) {
-      setIsHoursBased(storedValue === 'on');
-    } else {
-      // If no value found in cookies, set default to off
-      setCookie('hoursBased', 'off');
-    }
-  }, []);
-
-  const handleCheckboxChange = () => {
-    setIsHoursBased((prevValue) => {
-      const newValue = !prevValue;
-
-      // Store the new value in cookies
-      setCookie('hoursBased', newValue ? 'on' : 'off');
-
-      return newValue;
-    });
-  };
-
-  console.log("Cookied" + isHoursBased)
-  // Helper function to get a cookie value
-const getCookie = (name) => {
-  const cookies = document.cookie.split('; ');
-  for (const cookie of cookies) {
-    const [cookieName, cookieValue] = cookie.split('=');
-    if (cookieName === name) {
-      return cookieValue;
-    }
-  }
-  return null;
-};
-
-// Helper function to set a cookie value
-const setCookie = (name, value) => {
-  document.cookie = `${name}=${value}`;
-};
-
-let BasedOnHourse = document.cookie.replace(
-  /(?:(?:^|.*;\s*)hoursBased\s*=\s*([^;]*).*$)|^.*$/,
-  "$1"
-);
-if (BasedOnHourse === "off") {
-  BasedOnHourse = "normal"; // Fix the typo here if needed
-} else {
-  // If no value found in cookies, set default to "normal"
-  BasedOnHourse = "hourse";
-}
-console.log("Based On hourse: " + BasedOnHourse);
-
-
 
   useEffect(() => {
     // Function to fetch data from the API
@@ -383,7 +386,6 @@ console.log("Based On hourse: " + BasedOnHourse);
     // Call the function to fetch data
     fetchData();
   }, [selectedTechnologiesString]); // Include selectedTechnologiesString in the dependency array
-
 
   return (
     <div>
