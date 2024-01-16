@@ -94,7 +94,23 @@ const Module = () => {
     }
 
   };
+  const [searchTerm, setSearchTerm] = useState("");
 
+  // Update the search term when the user types
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  // Function to filter modules based on search term
+  const filterModules = (modules) => {
+    return modules.filter((module) =>
+      module.module.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      module.sequence_number.toString().includes(searchTerm) ||
+      module.technology.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      module.hours_number.toString().includes(searchTerm) ||
+      module.prize.toString().includes(searchTerm)
+    );
+  }
   const [totalRecords, setTotalRecords] = useState(0);
   const [userModules, setUserModules] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -621,8 +637,10 @@ const Module = () => {
                         className="form-control py-2"
                         id="floatingInput"
                         placeholder="name@example.com"
+                        value={searchTerm}
+                        onChange={handleSearchChange}
                       />
-                      <label for="floatingInput">Search</label>
+                      <label htmlFor="floatingInput">Search</label>
                     </div>
                   </div>
                 </div>
@@ -664,7 +682,7 @@ const Module = () => {
                     </tr>
                     {/* LODING MODULE ADDD */}
                     {Array.isArray(currentRecords) && currentRecords.length > 0 ? (
-                      currentRecords.map((module, index) => (
+                      filterModules(currentRecords).map((module, index) => (
                         <tr key={module.id}>
                           <th scope="row">{module.sequence_number}</th>
                           <td className="td-technology">{module.module}</td>

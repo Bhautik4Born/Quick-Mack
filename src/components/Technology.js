@@ -231,7 +231,35 @@ const Membership = () => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+  const [searchTerm, setSearchTerm] = useState("");
 
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setCurrentPage(1); // Reset current page to 1 when search term changes
+  };
+  
+
+  const filterModules = (modules) => {
+    return modules.filter((tech) =>
+      (
+        tech.sequence_number &&
+        tech.sequence_number.toString().includes(searchTerm)
+      ) ||
+      (
+        tech.technology &&
+        tech.technology.toLowerCase().includes(searchTerm.toLowerCase())
+      ) ||
+      (
+        tech.hourse &&
+        tech.hourse.toString().includes(searchTerm)
+      )
+    );
+  };
+  
+  
+   
+  
+  
 
   return (
     <div>
@@ -263,6 +291,20 @@ const Membership = () => {
                   >
                     <i className="fa-solid fa-plus"></i> Add New
                   </Link>
+                </div>
+                <div className="p-0 d-flex justify-content-end">
+                  <div className="form-floating small-floating mb-3 text-end">
+                    <input
+                      type="text"
+                      className="form-control py-2"
+                      id="floatingInput"
+                      placeholder="name@example.com"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+
+                    />
+                    <label htmlFor="floatingInput">Search</label>
+                  </div>
                 </div>
 
                 {/* RENDERING LODING */}
@@ -423,27 +465,25 @@ const Membership = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentRecords.map((tech, index) => (
-                        <tr key={index}>
-                          <td>{tech.sequence_number}</td>
-                          <td>{tech.technology}</td>
-                          <td>{tech.hourse}</td>
-                          <td>
+                      {filterModules(technologies).length > 0 ? (
+                        filterModules(technologies).map((tech, index) => (
+                          <tr key={index}>
+                            <td>{tech.sequence_number}</td>
+                            <td>{tech.technology}</td>
+                            <td>{tech.hourse}</td>
                             <td>
-                              
                               <div className="icon-up-del">
                                 <Link
                                   to={{
                                     pathname: `/edit/${tech.id}`,
                                     state: { id: tech.id },
                                   }}
-                                  onClick={() => handleIconClick(tech.id)} // Handle icon click to set the selected ID
+                                  onClick={() => handleIconClick(tech.id)}
                                   data-bs-toggle="modal"
                                   data-bs-target="#exampleModaledit"
                                 >
                                   <i className="fa-solid fa-pen"></i>
                                 </Link>
-                               
                                 <Link
                                   to={{ pathname: `/${tech.id}` }}
                                   onClick={() => handleDelete(tech.id)}
@@ -454,42 +494,35 @@ const Membership = () => {
                                 {deleteResponse && (
                                   <div>
                                     <p>API Response:</p>
-                                    <pre>
-                                      {JSON.stringify(deleteResponse, null, 2)}
-                                    </pre>
+                                    <pre>{JSON.stringify(deleteResponse, null, 2)}</pre>
                                   </div>
                                 )}
                               </div>
                             </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="4" style={{ textAlign: "center" }}>
+                            No data found
                           </td>
                         </tr>
-                      ))}
-                      
+                      )}
                     </tbody>
-                    <div>
-                        {isLoading ? (
-                          <p style={{textAlign:'center'}}>Loading...</p>
-                        ) : (
-                          <div>
-                            {/* {totalRecords} */}
-                          </div>
-                        )}
-                      </div>
                   </table>
                   <div className="pro-add-new px-0 mb-0 pt-3">
                     <p>
-                      {`Showing ${indexOfFirstRecord + 1} - ${indexOfLastRecord > technologies.length
-                          ? technologies.length
-                          : indexOfLastRecord
-                        } of ${technologies.length}`}
+                      {`Showing ${indexOfFirstRecord + 1} - ${indexOfLastRecord > filterModules(technologies).length
+                        ? filterModules(technologies).length
+                        : indexOfLastRecord
+                        } of ${filterModules(technologies).length}`}
                     </p>
                     <nav aria-label="...">
                       <ul className="pagination pagination-sm mb-0">
                         {pageNumbers.map((number) => (
                           <li
                             key={number}
-                            className={`page-item ${currentPage === number ? "active" : ""
-                              }`}
+                            className={`page-item ${currentPage === number ? "active" : ""}`}
                           >
                             <button
                               onClick={() => handlePageChange(number)}
@@ -503,6 +536,7 @@ const Membership = () => {
                     </nav>
                   </div>
                 </div>
+
                 {/* <div className="">
                   <div className="p-0 d-flex justify-content-end">
                     <div className="form-floating small-floating mb-3 text-end">

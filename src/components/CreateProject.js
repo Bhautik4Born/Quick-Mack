@@ -4,9 +4,8 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import axios from "axios";
 import config from "./config";
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 const CreateProject = () => {
   const { baseURL } = config;
@@ -15,6 +14,7 @@ const CreateProject = () => {
   const [client_name, setClient_name] = useState([]);
   const [project_name, setProject_name] = useState([]);
   const [responseMessage, setResponseMessage] = useState("");
+  const [moduleNames, setModuleNames] = useState([]);
 
   const userId = document.cookie.replace(
     /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
@@ -103,9 +103,6 @@ const CreateProject = () => {
   //   console.log("Active Links:", activeLinks);
   // };
 
-  
-  const [isHoursBased, setIsHoursBased] = useState(false);
-
   useEffect(() => {
     // Function to fetch data from the API
     const fetchData = async () => {
@@ -122,6 +119,10 @@ const CreateProject = () => {
 
         // Update the conferenceData state with the fetched data
         setConferenceData(response.data.data);
+
+        // Extract module names from the API response
+        const modules = response.data.data.map((item) => item.module);
+        setModuleNames(modules);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -130,60 +131,6 @@ const CreateProject = () => {
     // Call the fetchData function when the component mounts
     fetchData();
   }, []); // Empty dependency array ensures this effect runs only once
-
-  useEffect(() => {
-    // Check if there is a value stored in cookies
-    const storedValue = getCookie("hoursBased");
-    if (storedValue !== null) {
-      setIsHoursBased(storedValue === "on");
-    } else {
-      // If no value found in cookies, set default to off
-      setCookie("hoursBased", "off");
-    }
-  }, []);
-
-  const handleCheckboxChange = () => {
-    setIsHoursBased((prevValue) => {
-      const newValue = !prevValue;
-
-      // Store the new value in cookies
-      setCookie("hoursBased", newValue ? "on" : "off");
-
-      return newValue;
-    });
-  };
-
-  console.log("Cookied" + isHoursBased);
-  // Helper function to get a cookie value
-  const getCookie = (name) => {
-    const cookies = document.cookie.split("; ");
-    for (const cookie of cookies) {
-      const [cookieName, cookieValue] = cookie.split("=");
-      if (cookieName === name) {
-        return cookieValue;
-      }
-    }
-    return null;
-  };
-
-  // Helper function to set a cookie value
-  const setCookie = (name, value) => {
-    document.cookie = `${name}=${value}`;
-        window.location.href = `/CreateProject/?projectId=${retrievedProjectId}`; // Redirect to home page
-      
-  };
-
-  let BasedOnHourse = document.cookie.replace(
-    /(?:(?:^|.*;\s*)hoursBased\s*=\s*([^;]*).*$)|^.*$/,
-    "$1"
-  );
-  if (BasedOnHourse === "off") {
-    BasedOnHourse = "normal"; // Fix the typo here if needed
-  } else {
-    // If no value found in cookies, set default to "normal"
-    BasedOnHourse = "hourse";
-  }
-  console.log("Based On hourse: " + BasedOnHourse);
 
   const { productID } = useParams(); // Assuming 'productID' is the parameter name
 
@@ -211,7 +158,6 @@ const CreateProject = () => {
             body: JSON.stringify({
               user_id: userId_2,
               project_id: retrievedProjectId,
-              type: BasedOnHourse,
             }),
           }
         );
@@ -281,30 +227,24 @@ const CreateProject = () => {
   // Replace 'moduleIdToDelete' with the actual ID of the module you want to delete
   // deleteModule(moduleIdToDelete);
   //
-  const imageUrl = 'https://4born.info/assets/img/images/4Born_Solution.png';
-
 
   const handleDownloadPDF = () => {
-    const image = new Image();
-    image.src = imageUrl;
-    const table = document.querySelector('.table');
+    const table = document.querySelector(".table");
 
     html2canvas(table).then((canvas) => {
-
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('landscape');
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("landscape");
 
       // Add an image to PDF
-      pdf.addImage(imgData, 'PNG', 30, 50, 190, 120);
-
-
+      pdf.addImage(imgData, "PNG", 10, 10, 190, 120);
 
       // Save the PDF
-      pdf.save('table.pdf');
+      pdf.save("table.pdf");
     });
   };
 
   const [activeLinks, setActiveLinks] = useState([]);
+  const [moduleSelecSet, setModuleSelected] = useState([]);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
 
   // const data = { technology_names: [...] }; // Replace [...] with your actual technology data
@@ -316,8 +256,8 @@ const CreateProject = () => {
 
   // ... (Your existing code)
 
-  const handleLinkClick = (tech) => {
-    console.log("Clicked:", tech);
+  const handleLinkClick = (tech, data) => {
+    console.log("Clicked:", tech, data);
 
     // Toggle the selection of the clicked technology
     setActiveLinks((prevActiveLinks) =>
@@ -332,19 +272,81 @@ const CreateProject = () => {
         ? prevSelectedTechnologies.filter((id) => id !== tech.technology_ID)
         : [...prevSelectedTechnologies, tech.technology_ID]
     );
+    // Check if a module name is provided in the data
+    if (data && data.module) {
+      setModuleSelected(data.module);
+      // Perform some action based on the module
+      console.log("Module Name:", moduleSelecSet);
+
+      if (data.module === "exampleModule") {
+        console.log("Performing action for exampleModule");
+      }
+    }
 
     console.log("Active Links:", activeLinks);
     console.log("Selected Technologies:", selectedTechnologies);
   };
 
-  const selectedTechnologiesString = selectedTechnologies.join(',');
+  const selectedTechnologiesString = selectedTechnologies.join(",");
 
   const [totalPrize, setTotalPrize] = useState("0");
   const [totalHours, setTotalHours] = useState("0");
-<<<<<<< HEAD
   const [moduleName, setModuleName] = useState("");
-=======
->>>>>>> 0566930beb4be9ae534931f813ee37d113dbf4f5
+  const [isHoursBased, setIsHoursBased] = useState(false);
+
+  useEffect(() => {
+    // Check if there is a value stored in cookies
+    const storedValue = getCookie('hoursBased');
+    if (storedValue !== null) {
+      setIsHoursBased(storedValue === 'on');
+    } else {
+      // If no value found in cookies, set default to off
+      setCookie('hoursBased', 'off');
+    }
+  }, []);
+
+  const handleCheckboxChange = () => {
+    setIsHoursBased((prevValue) => {
+      const newValue = !prevValue;
+
+      // Store the new value in cookies
+      setCookie('hoursBased', newValue ? 'on' : 'off');
+
+      return newValue;
+    });
+  };
+
+  console.log("Cookied" + isHoursBased)
+  // Helper function to get a cookie value
+const getCookie = (name) => {
+  const cookies = document.cookie.split('; ');
+  for (const cookie of cookies) {
+    const [cookieName, cookieValue] = cookie.split('=');
+    if (cookieName === name) {
+      return cookieValue;
+    }
+  }
+  return null;
+};
+
+// Helper function to set a cookie value
+const setCookie = (name, value) => {
+  document.cookie = `${name}=${value}`;
+};
+
+let BasedOnHourse = document.cookie.replace(
+  /(?:(?:^|.*;\s*)hoursBased\s*=\s*([^;]*).*$)|^.*$/,
+  "$1"
+);
+if (BasedOnHourse === "off") {
+  BasedOnHourse = "normal"; // Fix the typo here if needed
+} else {
+  // If no value found in cookies, set default to "normal"
+  BasedOnHourse = "hourse";
+}
+console.log("Based On hourse: " + BasedOnHourse);
+
+
 
   useEffect(() => {
     // Function to fetch data from the API
@@ -358,12 +360,15 @@ const CreateProject = () => {
               "Content-Type": "application/json",
             },
             body: JSON.stringify({
-              type: "hourse",
+              type: BasedOnHourse,
               technology_id: selectedTechnologiesString,
-              module_name: "email",
+              // module_name: moduleNames,
+              module_name: moduleSelecSet,
             }),
+            //  console.log(moduleNames);
           }
         );
+        // console.log("module Names:", moduleNames);
 
         const data = await response.json();
 
@@ -378,93 +383,30 @@ const CreateProject = () => {
     // Call the function to fetch data
     fetchData();
   }, [selectedTechnologiesString]); // Include selectedTechnologiesString in the dependency array
+  const [filteredModules, setFilteredModules] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
 
-<<<<<<< HEAD
-=======
-  const [id, setId] = useState();
-  const [userModules, setUserModules] = useState([]);
-  const [selectedTechIdFilter, setSelectedTechIdFilter] = useState('');
+  const handleSearchChange = (event) => {
+    const searchTerm = event.target.value.toLowerCase();
+    setSearchTerm(searchTerm);
 
-
-
-  
-  const handleFilter = (userModules) => {
-    setSelectedTechnologies(userModules);
-    setSelectedTechIdFilter(userModules.join(','));
-  };
-
-
-  const fetchDatas = async () => {
-    try {
-      const user_Id = document.cookie.replace(
-        /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
-        '$1'
-      );
-      const userId = user_Id; // Replace with your user ID retrieval logic
-
-      const response = await fetch(`${baseURL}api/UserTechnologies/getUserTechnologies`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ user_id: userId,Filtertechnology:selectedTechIdFilter }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
-
-
-      const data = await response.json();
-      setUserModules(data.data);
-
-      // const responseData = await response.json();
-      // if (responseData && responseData.id) {
-      //   setId(responseData.id);
-      // }
-
-      // if (responseData && responseData.data) {
-      //   setUserModules(responseData.data);
-      // }
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  useEffect(() => {
-    fetchDatas();
-  }, [selectedTechIdFilter]);
-
-
-
-  const handleCheckboxChange = (event) => {
-    const userModules = event.target.value;
-    setSelectedTechnologies((prevSelected) => {
-      if (prevSelected.includes(selectedTechnolgy)) {
-        // If already selected, remove it
-        return prevSelected.filter((id) => id !== selectedTechnology);
-      } else {
-        // If not selected, add it
-        return [...prevSelected, selectedTechnology];
-      }
+    // Filter modules based on the search term
+    const filtered = conferenceData.filter((data) => {
+      return data.module.toLowerCase().includes(searchTerm);
     });
+
+    setFilteredModules(filtered);
   };
-  
->>>>>>> 0566930beb4be9ae534931f813ee37d113dbf4f5
+
+
   return (
     <div>
-
       {<Sidebar />}
-
       <div className="asside">
-
         <div className="about-first">
           <div className="row">
             <div className="col-4 mb-24">
-
               <div className="bg-box-new h-auto mb-24">
-
                 <div className="pro-add-new">
                   <h4>Select Module</h4>
                   <Link type="button" className="btn add-new">
@@ -482,36 +424,57 @@ const CreateProject = () => {
                   <div className="modal-dialog modal-dialog-centered modal-sm">
                     <div className="modal-content">
                       <div className="modal-header">
-                      
+                        <h5 className="modal-title" id="exampleModalLabel">
+                          Apply Filter
+                        </h5>
+                        <button
+                          type="button"
+                          className="btn-close"
+                          data-bs-dismiss="modal"
+                          aria-label="Close"
+                        ></button>
                       </div>
                       <div className="modal-body">
                         <div className="user-details">
-                          {Array.isArray(userModules) && userModules.length > 0 ? (
-                            userModules.map((tech) => (
-                              <div key={tech.id} className="form-check">
-                                <input
-                                  type="checkbox"
-                                  className="form-check-input"
-                                  id={`technology-${tech.id}`}
-                                  value={tech.id}
-                                  checked={userModules.includes(tech.id)}
-                                onChange={handleCheckboxChange}
-                                />
-                                <label className="flexCheckChecked" htmlFor={`technology-${tech.id}`}>
-                                  {tech.technology}
-                                </label>
-                              </div>
-                            ))
-                          ) : (
-                            <p>No Modules Available</p>
-                          )}
-                          <p>{id}</p>
-
+                          <div className="form-check mb-3">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              value=""
+                              id="flexCheckDefault"
+                            />
+                            <label
+                              className="form-check-label"
+                              for="flexCheckDefault"
+                            >
+                              Native Android
+                            </label>
+                          </div>
+                          <div className="form-check mb-3">
+                            <input
+                              className="form-check-input"
+                              type="checkbox"
+                              value=""
+                              id="flexCheckChecked"
+                            />
+                            <label
+                              className="form-check-label"
+                              for="flexCheckChecked"
+                            >
+                              Native Android
+                            </label>
+                          </div>
                           <div className="upload-reset-btn mb-0 justify-content-center pt-2">
-                            <button className="btn btn-reset" data-bs-dismiss="modal">
+                            <button
+                              className="btn btn-reset"
+                              data-bs-dismiss="modal"
+                            >
                               Cancel
                             </button>
-                            <button className="btn btn-upload me-0" data-bs-dismiss="modal" onClick={() => handleFilter(selectedTechnologies)} >
+                            <button
+                              className="btn btn-upload me-0"
+                              data-bs-dismiss="modal"
+                            >
                               Apply Filter
                             </button>
                           </div>
@@ -537,6 +500,9 @@ const CreateProject = () => {
                       className="form-control py-2"
                       id="floatingInput"
                       placeholder="name@example.com"
+                      value={searchTerm}
+                      onChange={handleSearchChange}
+
                     />
                     <label for="floatingInput">Search Module</label>
                   </div>
@@ -559,8 +525,8 @@ const CreateProject = () => {
               </div>
               <div className="all-project-table all-project-plus p-1">
                 <div>
-                  {conferenceData && Array.isArray(conferenceData) ? (
-                    conferenceData.map((data) => (
+                {filteredModules && Array.isArray(filteredModules) ? (
+              filteredModules.map((data) => (
                       <div
                         className="video-conference h-auto mb-10"
                         key={data.id}
@@ -594,7 +560,7 @@ const CreateProject = () => {
                                   style={{ flexWrap: "wrap" }}
                                 >
                                   {data &&
-                                    Array.isArray(data.technology_names) ? (
+                                  Array.isArray(data.technology_names) ? (
                                     data.technology_names.map((tech) =>
                                       activeLinks.includes(
                                         tech.technology_name
@@ -618,7 +584,9 @@ const CreateProject = () => {
                                             {tech.technology_name}
                                           </button>
                                         </p>
-                                      ) : 0
+                                      ) : (
+                                        <p></p>
+                                      )
                                     )
                                   ) : (
                                     <p>No technology names available</p>
@@ -643,19 +611,28 @@ const CreateProject = () => {
                             </div>
                           </div>
                           <div className="price-hours">
-                            <b>{data.module}</b>
+                            {/* <b>Module :-{moduleNames}</b> */}
                             <h3>{totalPrize}</h3>
                             <h4>{totalHours}</h4>
                           </div>
                         </div>
                         <div>
-                          <div className="five-tech" style={{ flexWrap: "wrap" }}>
+                          {/* <b>{data.module}</b> */}
+                          <div
+                            className="five-tech"
+                            style={{ flexWrap: "wrap" }}
+                          >
                             {data && Array.isArray(data.technology_names) ? (
                               data.technology_names.map((tech) => (
                                 <p key={tech.technology_ID}>
+                                  {/* <b>Module :-{moduleNames}</b> */}
                                   <a
-                                    className={activeLinks.includes(tech.technology_name) ? "active" : ""}
-                                    onClick={() => handleLinkClick(tech)}
+                                    className={
+                                      activeLinks.includes(tech.technology_name)
+                                        ? "active"
+                                        : ""
+                                    }
+                                    onClick={() => handleLinkClick(tech, data)}
                                   >
                                     {tech.technology_name}
                                   </a>
@@ -669,7 +646,7 @@ const CreateProject = () => {
                           {selectedTechnologies.length > 0 && (
                             <div>
                               {/* <h2>Selected Technology IDs</h2> */}
-                              <p>{selectedTechnologiesString}</p>
+                              {/* <p>{selectedTechnologiesString}</p> */}
                               {/* You can also display additional details if needed */}
                             </div>
                           )}
@@ -708,11 +685,11 @@ const CreateProject = () => {
                         onChange={handleproject}
                       />
                       <label for="floatingInput">Project Name</label>
-                    </div>pdf
+                    </div>
                     <div className="form-check form-switch me-2">
                       <label
                         className="form-check-label"
-                        for="flexSwitchCheckDefault"
+                        htmlFor="flexSwitchCheckDefault"
                       >
                         Base on Hours
                       </label>
@@ -720,6 +697,8 @@ const CreateProject = () => {
                         className="form-check-input"
                         type="checkbox"
                         id="flexSwitchCheckDefault"
+                        checked={isHoursBased}
+                        onChange={handleCheckboxChange}
                       />
                     </div>
                   </div>
@@ -790,13 +769,15 @@ const CreateProject = () => {
                     </tbody>
 
                     <tfoot>
-                      {imageUrl && <img src={imageUrl} alt="4Born Solution" width="100" height="100" style={{ alignItems: "center", justifyContent: "center" }} />}
                       <tr className="last-tr-project">
-
                         <th></th>
                         <td>
-
-                          <button style={buttonStyle} onClick={handleDownloadPDF}>Download PDF</button>
+                          <button
+                            style={buttonStyle}
+                            onClick={handleDownloadPDF}
+                          >
+                            Download PDF
+                          </button>
                           <div>
                             {/* <button onClick={handleDownloadPDF}>Download PDF</button> */}
                           </div>
