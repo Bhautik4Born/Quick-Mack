@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect , useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import axios from "axios";
 import config from "./config";
 import jsPDF from "jspdf";
-import html2canvas from "html2canvas";
+import "jspdf-autotable";
+import html2canvas from 'html2canvas';
+
 
 const CreateProject = () => {
   const { baseURL } = config;
@@ -40,6 +42,11 @@ const CreateProject = () => {
     background: "#F7A51B",
     boxShadow:
       "0px 1px 5px 0px rgba(50, 71, 92, 0.02), 0px 2px 2px 0px rgba(50, 71, 92, 0.04), 0px 3px 1px -2px rgba(50, 71, 92, 0.06)",
+  };
+
+  const ImageStyle = {
+    // display:none,
+    // display: "none",
   };
 
   // const name = queryParameters.get("name")
@@ -158,6 +165,7 @@ const CreateProject = () => {
             body: JSON.stringify({
               user_id: userId_2,
               project_id: retrievedProjectId,
+              type: "normal",
             }),
           }
         );
@@ -228,20 +236,6 @@ const CreateProject = () => {
   // deleteModule(moduleIdToDelete);
   //
 
-  const handleDownloadPDF = () => {
-    const table = document.querySelector(".table");
-
-    html2canvas(table).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("landscape");
-
-      // Add an image to PDF
-      pdf.addImage(imgData, "PNG", 10, 10, 190, 120);
-
-      // Save the PDF
-      pdf.save("table.pdf");
-    });
-  };
 
   const [activeLinks, setActiveLinks] = useState([]);
   const [moduleSelecSet, setModuleSelected] = useState([]);
@@ -318,33 +312,33 @@ const CreateProject = () => {
 
   console.log("Cookied" + isHoursBased)
   // Helper function to get a cookie value
-const getCookie = (name) => {
-  const cookies = document.cookie.split('; ');
-  for (const cookie of cookies) {
-    const [cookieName, cookieValue] = cookie.split('=');
-    if (cookieName === name) {
-      return cookieValue;
+  const getCookie = (name) => {
+    const cookies = document.cookie.split('; ');
+    for (const cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.split('=');
+      if (cookieName === name) {
+        return cookieValue;
+      }
     }
+    return null;
+  };
+
+  // Helper function to set a cookie value
+  const setCookie = (name, value) => {
+    document.cookie = `${name}=${value}`;
+  };
+
+  let BasedOnHourse = document.cookie.replace(
+    /(?:(?:^|.*;\s*)hoursBased\s*=\s*([^;]*).*$)|^.*$/,
+    "$1"
+  );
+  if (BasedOnHourse === "off") {
+    BasedOnHourse = "normal"; // Fix the typo here if needed
+  } else {
+    // If no value found in cookies, set default to "normal"
+    BasedOnHourse = "hourse";
   }
-  return null;
-};
-
-// Helper function to set a cookie value
-const setCookie = (name, value) => {
-  document.cookie = `${name}=${value}`;
-};
-
-let BasedOnHourse = document.cookie.replace(
-  /(?:(?:^|.*;\s*)hoursBased\s*=\s*([^;]*).*$)|^.*$/,
-  "$1"
-);
-if (BasedOnHourse === "off") {
-  BasedOnHourse = "normal"; // Fix the typo here if needed
-} else {
-  // If no value found in cookies, set default to "normal"
-  BasedOnHourse = "hourse";
-}
-console.log("Based On hourse: " + BasedOnHourse);
+  console.log("Based On hourse: " + BasedOnHourse);
 
 
 
@@ -383,21 +377,36 @@ console.log("Based On hourse: " + BasedOnHourse);
     // Call the function to fetch data
     fetchData();
   }, [selectedTechnologiesString]); // Include selectedTechnologiesString in the dependency array
-  const [filteredModules, setFilteredModules] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const imageRef = useRef(null);
+  const pdfRef = useRef(null);
 
-  const handleSearchChange = (event) => {
-    const searchTerm = event.target.value.toLowerCase();
-    setSearchTerm(searchTerm);
+  const handleDownloadPDF = () => {
+    const pdf = new jsPDF();
 
-    // Filter modules based on the search term
-    const filtered = conferenceData.filter((data) => {
-      return data.module.toLowerCase().includes(searchTerm);
+    // Capture image and save it to PDF
+    html2canvas(imageRef.current).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      pdf.addImage(imgData, 'PNG', 10, 10, 50, 50); // Adjust position and size as needed
+
+      // Add a header to the PDF
+      pdf.text("Your PDF Title", 14, 70); // Adjust the position as needed
+
+      // Add table data to the PDF using jspdf-autotable
+      pdf.autoTable({
+        head: [["No", "Module", "No Of Hours", "Prize"]],
+        body: data.map((item, index) => [
+          index + 1,
+          item.module_details[0]?.module || "",
+          item.module_details[0]?.hours_number || "",
+          `$${item.module_details[0]?.prize || ""}`,
+        ]),
+        startY: 80, // Adjust the starting Y position as needed
+      });
+
+      // Save the PDF
+      pdf.save("combined_table.pdf");
     });
-
-    setFilteredModules(filtered);
   };
-
 
   return (
     <div>
@@ -500,9 +509,6 @@ console.log("Based On hourse: " + BasedOnHourse);
                       className="form-control py-2"
                       id="floatingInput"
                       placeholder="name@example.com"
-                      value={searchTerm}
-                      onChange={handleSearchChange}
-
                     />
                     <label for="floatingInput">Search Module</label>
                   </div>
@@ -525,8 +531,8 @@ console.log("Based On hourse: " + BasedOnHourse);
               </div>
               <div className="all-project-table all-project-plus p-1">
                 <div>
-                {filteredModules && Array.isArray(filteredModules) ? (
-              filteredModules.map((data) => (
+                  {conferenceData && Array.isArray(conferenceData) ? (
+                    conferenceData.map((data) => (
                       <div
                         className="video-conference h-auto mb-10"
                         key={data.id}
@@ -560,7 +566,7 @@ console.log("Based On hourse: " + BasedOnHourse);
                                   style={{ flexWrap: "wrap" }}
                                 >
                                   {data &&
-                                  Array.isArray(data.technology_names) ? (
+                                    Array.isArray(data.technology_names) ? (
                                     data.technology_names.map((tech) =>
                                       activeLinks.includes(
                                         tech.technology_name
@@ -772,12 +778,20 @@ console.log("Based On hourse: " + BasedOnHourse);
                       <tr className="last-tr-project">
                         <th></th>
                         <td>
-                          <button
-                            style={buttonStyle}
-                            onClick={handleDownloadPDF}
-                          >
-                            Download PDF
-                          </button>
+                          <div>
+                            {/* Your image element */}
+                            {/* <img style={{display: "none"}} ref={imageRef} src="/static/media/logo.6ce4e3a83904a9e96e64e9ed4db9b3ba.svg" alt="Logo" /> */}
+                            <img ref={imageRef} src="/static/media/logo.6ce4e3a83904a9e96e64e9ed4db9b3ba.svg" alt="Logo" />
+
+                            {/* Your PDF element */}
+                            <div ref={pdfRef}>
+                              {/* Include your PDF content here */}
+                              {/* For example, you can render a PDF viewer or use an embed element */}
+                            </div>
+
+                            {/* Button to trigger the download */}
+                            <button onClick={handleDownloadPDF}>Download Combined PDF</button>
+                          </div>
                           <div>
                             {/* <button onClick={handleDownloadPDF}>Download PDF</button> */}
                           </div>
