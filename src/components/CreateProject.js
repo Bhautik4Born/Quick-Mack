@@ -526,14 +526,6 @@ const CreateProject = () => {
     // Save the PDF
     pdf.save('combined_table.pdf');
   };
-  
-  
-
-  
-  
-  
-  
-
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredConferenceData, setFilteredConferenceData] = useState([]);
 
@@ -611,7 +603,6 @@ const CreateProject = () => {
                           ) : (
                             <p>No Modules Available</p>
                           )}
-
                           <div className="upload-reset-btn mb-0 justify-content-center pt-2">
                             <button className="btn btn-reset" data-bs-dismiss="modal">
                               Cancel
