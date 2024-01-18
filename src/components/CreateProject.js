@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useParams } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
@@ -121,7 +121,7 @@ const CreateProject = () => {
 
         const response = await axios.post(
           "https://quickmake.graphiglow.in/api/ModuleTechnology/module",
-          { user_id: userId } // Replace with the actual user_id
+          { user_id: userId, } // Replace with the actual user_id
         );
 
         // Update the conferenceData state with the fetched data
@@ -235,6 +235,62 @@ const CreateProject = () => {
   // Replace 'moduleIdToDelete' with the actual ID of the module you want to delete
   // deleteModule(moduleIdToDelete);
   //
+
+  const [technologies, setTechnologies] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [displayedTechnologies, setDisplayedTechnologies] = useState([]);
+
+
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const user_Id = document.cookie.replace(
+          /(?:(?:^|.*;\s*)userId\s*=\s*([^;]*).*$)|^.*$/,
+          "$1"
+        );
+        const userId = user_Id; // Replace with your user ID retrieval logic
+
+        const response = await fetch(`${baseURL}api/UserTechnologies/getUserTechnologies`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ user_id: userId }),
+        });
+
+        if (!response.ok) {
+
+          throw new Error("Failed to fetch data");
+        }
+
+        const responseData = await response.json();
+        if (responseData && responseData.total_records) {
+          setTotalRecords(responseData.total_records);
+        }
+
+        if (responseData && responseData.data) {
+          setTechnologies(responseData.data);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
+
+
+
+
+
 
 
   const [activeLinks, setActiveLinks] = useState([]);
@@ -379,35 +435,124 @@ const CreateProject = () => {
   }, [selectedTechnologiesString]); // Include selectedTechnologiesString in the dependency array
   const imageRef = useRef(null);
   const pdfRef = useRef(null);
+  const containerRef = useRef(null);
+  
 
-  const handleDownloadPDF = () => {
+
+
+
+  
+  const handleDownloadPDF = async () => {
+    // Display the container before capturing it for the PDF
+    containerRef.current.style.display = 'block';
+  
     const pdf = new jsPDF();
-
-    // Capture image and save it to PDF
-    html2canvas(imageRef.current).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      pdf.addImage(imgData, 'PNG', 10, 10, 50, 50); // Adjust position and size as needed
-
-      // Add a header to the PDF
-      pdf.text("Your PDF Title", 14, 70); // Adjust the position as needed
-
+  
+    // Add header to the PDF
+    pdf.setTextColor('#32475C'); // Black color
+    pdf.setFont('bold');
+    pdf.setFontSize(12); // Font size
+    pdf.text('4BORN SOLUTIONS', 135, 28);
+  
+    pdf.setTextColor('#32475C'); // Black color
+    pdf.setFont('normal');
+    pdf.setFontSize(10); // Font size
+    pdf.text('A-27, Rameshwar Park Society,', 135, 35); // Adjust the position as needed
+    pdf.text('Chitra - Sidsar Road,', 135, 40); // Adjust the position as needed
+    pdf.text('Chitra, Bhavnagar,', 135, 45); // Adjust the position as needed
+    pdf.text('Gujarat - INDIA', 135, 50); // Adjust the position as needed
+    pdf.text('www.4born.info', 135, 55); // Adjust the position as needed
+  
+    // Add image to the PDF
+    const canvas = document.createElement('canvas');
+    canvas.width = imageRef.current.width;
+    canvas.height = imageRef.current.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(imageRef.current, 0, 0, imageRef.current.width, imageRef.current.height);
+    const imgData = canvas.toDataURL('image/png');
+    pdf.addImage(imgData, 'PNG', 15, 15, 60, 60); // adjust position and size as needed
+  
+    // Loop through each module in the data array
+    for (let index = 0; index < data.length; index++) {
+      const module = data[index];
+  
+      // If it's not the first module, add a new page for the subsequent modules
+      if (index > 0) {
+        pdf.addPage();
+      }
+  
+      // Add module details to the PDF
+      pdf.setTextColor('#32475C'); // Black color
+      pdf.setFont('bold');
+      pdf.setFontSize(12); // Font size
+      pdf.text(`Module ${index + 1}`, 20, 75); // Adjust the position as needed
+  
       // Add table data to the PDF using jspdf-autotable
+      const moduleData = module.module_details.map((detail) => [
+        detail?.sequence_number || '',
+        detail?.module || '',
+        detail?.hours_number || '',
+        `$${detail?.prize || ''}`,
+      ]);
+  
+      // Calculate total hours and total prize for the module
+      const totalHours = module.module_details.reduce((total, detail) => total + (parseFloat(detail.hours_number) || 0), 0);
+      const totalPrize = module.module_details.reduce((total, detail) => total + (parseFloat(detail.prize) || 0), 0);
+  
+      // Format total hours and total prize
+      const formattedHours = module.module_details.map((detail) =>`${detail?.hours_number || 0}`).join(',');
+      const formattedPrize = module.module_details.map((detail) => `$${detail?.prize || 0}`).join(',');
+  
+      // Add the total row
+      const totalRow = [
+        '',
+        'Net Subtotal :',
+        `${""}${totalHours.toFixed(2)}`,
+        `${""}$${totalPrize.toFixed(2)}`,
+      ];
+  
+      moduleData.push(totalRow);
+  
       pdf.autoTable({
-        head: [["No", "Module", "No Of Hours", "Prize"]],
-        body: data.map((item, index) => [
-          index + 1,
-          item.module_details[0]?.module || "",
-          item.module_details[0]?.hours_number || "",
-          `$${item.module_details[0]?.prize || ""}`,
-        ]),
-        startY: 80, // Adjust the starting Y position as needed
+        head: [['No', 'Module', 'No Of Hours', 'Prize']],
+        body: moduleData,
+        startY: 100, // Adjust the starting Y position as needed
       });
-
-      // Save the PDF
-      pdf.save("combined_table.pdf");
-    });
+    }
+  
+    // Hide the container again after capturing it for the PDF
+    containerRef.current.style.display = 'none';
+  
+    // Save the PDF
+    pdf.save('combined_table.pdf');
   };
+  
+  
 
+  
+  
+  
+  
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filteredConferenceData, setFilteredConferenceData] = useState([]);
+
+  useEffect(() => {
+    // Filter the conferenceData based on the search term
+    const filteredData = conferenceData.filter((data) =>
+      data.module.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredConferenceData(filteredData);
+  }, [searchTerm, conferenceData]);
+
+  const handleFilter = () => {
+    // Update displayed technologies based on selected technologies
+    if (selectedTechnologies.length > 0) {
+      setDisplayedTechnologies(technologies.filter((tech) => selectedTechnologies.includes(tech.id)));
+    } else {
+      setDisplayedTechnologies([]); // No technologies selected, show no data
+    }
+  }
   return (
     <div>
       {<Sidebar />}
@@ -445,45 +590,33 @@ const CreateProject = () => {
                       </div>
                       <div className="modal-body">
                         <div className="user-details">
-                          <div className="form-check mb-3">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckDefault"
-                            />
-                            <label
-                              className="form-check-label"
-                              for="flexCheckDefault"
-                            >
-                              Native Android
-                            </label>
-                          </div>
-                          <div className="form-check mb-3">
-                            <input
-                              className="form-check-input"
-                              type="checkbox"
-                              value=""
-                              id="flexCheckChecked"
-                            />
-                            <label
-                              className="form-check-label"
-                              for="flexCheckChecked"
-                            >
-                              Native Android
-                            </label>
-                          </div>
+                          {isLoading ? (
+                            <p>Loading...</p>
+                          ) : Array.isArray(technologies) && technologies.length > 0 ? (
+                            technologies.map((tech) => (
+                              <div key={tech.id} className="form-check">
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  id={`technology-${tech.id}`}
+                                  value={tech.id}
+                                  checked={selectedTechnologies.includes(tech.id)}
+                                  onChange={() => handleCheckboxChange(tech.id)}
+                                />
+                                <label className="flexCheckChecked" htmlFor={`technology-${tech.id}`}>
+                                  {tech.technology}
+                                </label>
+                              </div>
+                            ))
+                          ) : (
+                            <p>No Modules Available</p>
+                          )}
+
                           <div className="upload-reset-btn mb-0 justify-content-center pt-2">
-                            <button
-                              className="btn btn-reset"
-                              data-bs-dismiss="modal"
-                            >
+                            <button className="btn btn-reset" data-bs-dismiss="modal">
                               Cancel
                             </button>
-                            <button
-                              className="btn btn-upload me-0"
-                              data-bs-dismiss="modal"
-                            >
+                            <button className="btn btn-upload me-0" data-bs-dismiss="modal" onClick={handleFilter}>
                               Apply Filter
                             </button>
                           </div>
@@ -508,10 +641,13 @@ const CreateProject = () => {
                       type="text"
                       className="form-control py-2"
                       id="floatingInput"
-                      placeholder="name@example.com"
+                      placeholder="Search Module"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    <label for="floatingInput">Search Module</label>
+                    <label htmlFor="floatingInput">Search Module</label>
                   </div>
+
                 </div>
               </div>
               {/* LODING DATA FEATUERS */}
@@ -531,8 +667,8 @@ const CreateProject = () => {
               </div>
               <div className="all-project-table all-project-plus p-1">
                 <div>
-                  {conferenceData && Array.isArray(conferenceData) ? (
-                    conferenceData.map((data) => (
+                  {filteredConferenceData.length > 0 ? (
+                    filteredConferenceData.map((data) => (
                       <div
                         className="video-conference h-auto mb-10"
                         key={data.id}
@@ -778,22 +914,30 @@ const CreateProject = () => {
                       <tr className="last-tr-project">
                         <th></th>
                         <td>
-                          <div>
+                          <div ref={containerRef} style={{ display: 'none' }}>
                             {/* Your image element */}
-                            {/* <img style={{display: "none"}} ref={imageRef} src="/static/media/logo.6ce4e3a83904a9e96e64e9ed4db9b3ba.svg" alt="Logo" /> */}
-                            <img ref={imageRef} src="/static/media/logo.6ce4e3a83904a9e96e64e9ed4db9b3ba.svg" alt="Logo" />
+                            <img
+                              style={{ marginLeft: '10px' }} // Adjust margin-left as needed
+                              ref={imageRef}
+                              src="/static/media/logo.6ce4e3a83904a9e96e64e9ed4db9b3ba.svg"
+                              alt="Logo"
+                            />
 
-                            {/* Your PDF element */}
-                            <div ref={pdfRef}>
-                              {/* Include your PDF content here */}
-                              {/* For example, you can render a PDF viewer or use an embed element */}
-                            </div>
-
-                            {/* Button to trigger the download */}
-                            <button onClick={handleDownloadPDF}>Download Combined PDF</button>
+                            {/* Your text element */}
+                            {/* <span style={{ marginLeft: '3rem', fontSize: '12px', fontWeight: 'bold' }}>
+                              4BORN SOLUTIONS
+                            </span> */}
                           </div>
+                          <button style={buttonStyle} onClick={handleDownloadPDF}>DownloadPDF</button>
+    
+                          {/* Your PDF element */}
+                          <div ref={pdfRef}>
+                            {/* Include your PDF content here */}
+                            {/* For example, you can render a PDF viewer or use an embed element */}
+                          </div>
+
                           <div>
-                            {/* <button onClick={handleDownloadPDF}>Download PDF</button> */}
+                           
                           </div>
                         </td>
                         <td>
