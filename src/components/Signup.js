@@ -26,7 +26,6 @@ const Signup = () => {
     password: "",
     mobileNumber: "",
   });
-
   const [apiResponse, setApiResponse] = useState("");
 
   const handleChange = (e) => {
@@ -36,10 +35,8 @@ const Signup = () => {
       [name]: value,
     });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await axios.post(
         `${baseURL}api/user/register`,
@@ -69,14 +66,12 @@ const Signup = () => {
       } else if (response.data.message === "PASSWORD already registered.") {
         alert("PASSWORD already registered.");
       }
-
       setApiResponse(response.data.message);
     } catch (error) {
       console.error("Error:", error);
       setApiResponse("Error occurred during registration");
     }
   };
-
   return (
     <div>
       <div className="container">

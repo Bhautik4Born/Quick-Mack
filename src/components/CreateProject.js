@@ -134,7 +134,6 @@ const CreateProject = () => {
         console.error("Error fetching data:", error);
       }
     };
-
     // Call the fetchData function when the component mounts
     fetchData();
   }, []); // Empty dependency array ensures this effect runs only once
@@ -169,11 +168,9 @@ const CreateProject = () => {
             }),
           }
         );
-
         if (!response.ok) {
           throw new Error("Network response was not ok.");
         }
-
         const responseData = await response.json();
         setData(responseData.data || []); // Ensure setData receives an array even if responseData.data is undefined
       } catch (error) {
@@ -240,11 +237,6 @@ const CreateProject = () => {
   // const [isLoading, setIsLoading] = useState(true);
   const [totalRecords, setTotalRecords] = useState(0);
   const [displayedTechnologies, setDisplayedTechnologies] = useState([]);
-
-
-
-
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -261,17 +253,13 @@ const CreateProject = () => {
           },
           body: JSON.stringify({ user_id: userId }),
         });
-
         if (!response.ok) {
-
           throw new Error("Failed to fetch data");
         }
-
         const responseData = await response.json();
         if (responseData && responseData.total_records) {
           setTotalRecords(responseData.total_records);
         }
-
         if (responseData && responseData.data) {
           setTechnologies(responseData.data);
         }
@@ -281,18 +269,8 @@ const CreateProject = () => {
         setIsLoading(false);
       }
     };
-
     fetchData();
   }, []);
-
-
-
-
-
-
-
-
-
   const [activeLinks, setActiveLinks] = useState([]);
   const [moduleSelecSet, setModuleSelected] = useState([]);
   const [selectedTechnology, setSelectedTechnology] = useState(null);
@@ -303,19 +281,15 @@ const CreateProject = () => {
   const [selectedTechnologies, setSelectedTechnologies] = useState([]);
 
   // const data = { technology_names: [...] }; // Replace [...] with your actual technology data
-
   // ... (Your existing code)
-
   const handleLinkClick = (tech, data) => {
     console.log("Clicked:", tech, data);
-
     // Toggle the selection of the clicked technology
     setActiveLinks((prevActiveLinks) =>
       prevActiveLinks.includes(tech.technology_name)
         ? prevActiveLinks.filter((link) => link !== tech.technology_name)
         : [...prevActiveLinks, tech.technology_name]
     );
-
     // Update the selected technologies list
     setSelectedTechnologies((prevSelectedTechnologies) =>
       prevSelectedTechnologies.includes(tech.technology_ID)
@@ -365,7 +339,6 @@ const CreateProject = () => {
       return newValue;
     });
   };
-
   console.log("Cookied" + isHoursBased)
   // Helper function to get a cookie value
   const getCookie = (name) => {
@@ -378,12 +351,10 @@ const CreateProject = () => {
     }
     return null;
   };
-
   // Helper function to set a cookie value
   const setCookie = (name, value) => {
     document.cookie = `${name}=${value}`;
   };
-
   let BasedOnHourse = document.cookie.replace(
     /(?:(?:^|.*;\s*)hoursBased\s*=\s*([^;]*).*$)|^.*$/,
     "$1"
@@ -395,9 +366,6 @@ const CreateProject = () => {
     BasedOnHourse = "hourse";
   }
   console.log("Based On hourse: " + BasedOnHourse);
-
-
-
   useEffect(() => {
     // Function to fetch data from the API
     const fetchData = async () => {
@@ -436,57 +404,52 @@ const CreateProject = () => {
   const imageRef = useRef(null);
   const pdfRef = useRef(null);
   const containerRef = useRef(null);
-  
 
-
-
-
-  
   const handleDownloadPDF = async () => {
     // Display the container before capturing it for the PDF
     containerRef.current.style.display = 'block';
-  
+
     const pdf = new jsPDF();
-  
+
     // Add header to the PDF
     pdf.setTextColor('#32475C'); // Black color
-    pdf.setFont('bold');
+    pdf.setFont('PublicSans');
     pdf.setFontSize(12); // Font size
     pdf.text('4BORN SOLUTIONS', 135, 28);
-  
+
     pdf.setTextColor('#32475C'); // Black color
-    pdf.setFont('normal');
+    pdf.setFont('PublicSans');
     pdf.setFontSize(10); // Font size
     pdf.text('A-27, Rameshwar Park Society,', 135, 35); // Adjust the position as needed
     pdf.text('Chitra - Sidsar Road,', 135, 40); // Adjust the position as needed
     pdf.text('Chitra, Bhavnagar,', 135, 45); // Adjust the position as needed
     pdf.text('Gujarat - INDIA', 135, 50); // Adjust the position as needed
     pdf.text('www.4born.info', 135, 55); // Adjust the position as needed
-  
+
     // Add image to the PDF
     const canvas = document.createElement('canvas');
     canvas.width = imageRef.current.width;
     canvas.height = imageRef.current.height;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(imageRef.current, 0, 0, imageRef.current.width, imageRef.current.height);
-    const imgData = canvas.toDataURL('image/png');
-    pdf.addImage(imgData, 'PNG', 15, 15, 60, 60); // adjust position and size as needed
-  
+    const imgData = canvas.toDataURL('image/svg');
+    pdf.addImage(imgData, 'svg', 30, 30, 40, 40); // adjust position and size as needed
+
     // Loop through each module in the data array
     for (let index = 0; index < data.length; index++) {
       const module = data[index];
-  
+
       // If it's not the first module, add a new page for the subsequent modules
       if (index > 0) {
         pdf.addPage();
       }
-  
+
       // Add module details to the PDF
       pdf.setTextColor('#32475C'); // Black color
       pdf.setFont('bold');
       pdf.setFontSize(12); // Font size
-      pdf.text(`Module ${index + 1}`, 20, 75); // Adjust the position as needed
-  
+      // pdf.text(` ${index + ''}`, 20, 75); // Adjust the position as needed
+
       // Add table data to the PDF using jspdf-autotable
       const moduleData = module.module_details.map((detail) => [
         detail?.sequence_number || '',
@@ -494,35 +457,53 @@ const CreateProject = () => {
         detail?.hours_number || '',
         `$${detail?.prize || ''}`,
       ]);
-  
+
       // Calculate total hours and total prize for the module
       const totalHours = module.module_details.reduce((total, detail) => total + (parseFloat(detail.hours_number) || 0), 0);
       const totalPrize = module.module_details.reduce((total, detail) => total + (parseFloat(detail.prize) || 0), 0);
-  
+
       // Format total hours and total prize
-      const formattedHours = module.module_details.map((detail) =>`${detail?.hours_number || 0}`).join(',');
-      const formattedPrize = module.module_details.map((detail) => `$${detail?.prize || 0}`).join(',');
-  
-      // Add the total row
+      const formattedHours = `${totalHours.toFixed('')}`;
+      const formattedPrize = `$${totalPrize.toFixed('')}`;
+
+      // Add the total row at the end of the moduleData array
       const totalRow = [
         '',
         'Net Subtotal :',
-        `${""}${totalHours.toFixed(2)}`,
-        `${""}$${totalPrize.toFixed(2)}`,
-      ];
-  
-      moduleData.push(totalRow);
-  
+        `${formattedHours}`,
+        `${formattedPrize}`,
+    ];  
+    moduleData.push(totalRow);
+
       pdf.autoTable({
         head: [['No', 'Module', 'No Of Hours', 'Prize']],
         body: moduleData,
-        startY: 100, // Adjust the starting Y position as needed
+        startY: 100,
+        headStyles: { fillColor: [247, 165, 27] },
+        styles: { textColor: [38, 42, 46] },
       });
-    }
+
+      const lastY = pdf.previousAutoTable.finalY;
+      const lineY = lastY + 10; // Adjust the position as needed
   
+      // Add the line below Net Subtotal
+      pdf.setLineWidth(0.5); // Set line width as needed
+      pdf.line(1, lineY, 500, lineY); // Adjust the width as needed
+  
+      // Move the Net Subtotal row down
+      pdf.setY(lineY + 10); // Adjust the position as needed
+  
+      // Draw the Net Subtotal row
+      pdf.autoTable({
+        body: [totalRow],
+        startY: lineY + 10,
+        // ... (rest of the autoTable options remain the same)
+      });
+  
+    }
     // Hide the container again after capturing it for the PDF
     containerRef.current.style.display = 'none';
-  
+
     // Save the PDF
     pdf.save('combined_table.pdf');
   };
@@ -920,7 +901,7 @@ const CreateProject = () => {
                             </span> */}
                           </div>
                           <button style={buttonStyle} onClick={handleDownloadPDF}>DownloadPDF</button>
-    
+
                           {/* Your PDF element */}
                           <div ref={pdfRef}>
                             {/* Include your PDF content here */}
@@ -928,14 +909,14 @@ const CreateProject = () => {
                           </div>
 
                           <div>
-                           
+
                           </div>
                         </td>
                         <td>
                           <b>Net Subtotal :</b>
                         </td>
-                        <td>500</td>
-                        <td>$ 5000</td>
+                        <td>{totalHours}</td>
+                        <td>{totalPrize}</td>
                         <td>
                           <div className="save-next">
                             {/* <Link to={"#"}>Save & Next </Link> */}
