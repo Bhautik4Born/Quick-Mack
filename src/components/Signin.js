@@ -59,7 +59,11 @@ const Signin = () => {
     if (apiResponse === "Login successful") {
       alert("Login successful");
       navigate("/Dashboard");
-    } else if (apiResponse === "Email not registered Please register..") {
+    }
+    else if (apiResponse === "Email is Not valid") {
+      alert("Email email is not valid plese rgiter...");
+    }
+    else if (apiResponse === "Email not registered. Please register.") {
       alert("Email not registered. Please register..");
     } else if (apiResponse === "Please enter valid credentials") {
       alert("Please enter valid credentials");

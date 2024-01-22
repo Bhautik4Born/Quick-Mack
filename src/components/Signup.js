@@ -46,8 +46,8 @@ const Signup = () => {
         // Redirect to a different page upon successful registration
         alert("Signup Successfully...!");
         window.location.href = "/"; // Redirect to home page
-      } else if (response.data.message === "All fields are required") {
-        alert("All fields are required");
+      } else if (response.data.message === "Password must contain at least 8 characters with at least one special character, one uppercase letter, and one number") {
+        alert("Password must contain at least 8 characters with at least one special character, one uppercase letter, and one number");
       } else if (response.data.message === "Enter the valid user name ") {
         alert("Enter the valid user name");
       } else if (response.data.message === "Username  already registered") {

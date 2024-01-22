@@ -185,6 +185,26 @@ const CreateProject = () => {
     fetchData();
   }, []); // Runs once on component mount
   // Function to delete a module via API call
+  const calculateTotals = () => {
+    let hoursTotal = 0;
+    let prizeTotal = 0;
+
+    data.forEach((item) => {
+      if (item.module_details && item.module_details.length > 0) {
+        item.module_details.forEach((detail) => {
+          hoursTotal += detail.hours_number  ? parseFloat(detail.hours_number) : 0;
+          prizeTotal += detail.prize ? parseFloat(detail.prize) : 0;
+        });
+      }
+    });
+
+    setTotalHours(hoursTotal.toFixed(2));
+    setTotalPrize(prizeTotal.toFixed(2));
+  };
+
+  useEffect(() => {
+    calculateTotals();
+  }, [data]);
 
   ///delete api
 
@@ -313,7 +333,7 @@ const CreateProject = () => {
 
   const selectedTechnologiesString = selectedTechnologies.join(",");
 
-  const [totalPrize, setTotalPrize] = useState("0");
+  const [totalPrize, setTotalPrize] = useState(`0`);
   const [totalHours, setTotalHours] = useState("0");
   const [moduleName, setModuleName] = useState("");
   const [isHoursBased, setIsHoursBased] = useState(false);
@@ -391,7 +411,7 @@ const CreateProject = () => {
         const data = await response.json();
 
         // Update state with the received data
-        setTotalPrize(`$${data.total_prize}`);
+        setTotalPrize(data.total_prize.toString());
         setTotalHours(data.total_hours_number.toString());
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -404,6 +424,7 @@ const CreateProject = () => {
   const imageRef = useRef(null);
   const pdfRef = useRef(null);
   const containerRef = useRef(null);
+
 
   const handleDownloadPDF = async () => {
     // Display the container before capturing it for the PDF
@@ -472,8 +493,8 @@ const CreateProject = () => {
         'Net Subtotal :',
         `${formattedHours}`,
         `${formattedPrize}`,
-    ];  
-    moduleData.push(totalRow);
+      ];
+      // moduleData.push(totalRow);
 
       pdf.autoTable({
         head: [['No', 'Module', 'No Of Hours', 'Prize']],
@@ -485,21 +506,21 @@ const CreateProject = () => {
 
       const lastY = pdf.previousAutoTable.finalY;
       const lineY = lastY + 10; // Adjust the position as needed
-  
+
       // Add the line below Net Subtotal
-      pdf.setLineWidth(0.5); // Set line width as needed
-      pdf.line(1, lineY, 500, lineY); // Adjust the width as needed
-  
-      // Move the Net Subtotal row down
-      pdf.setY(lineY + 10); // Adjust the position as needed
-  
+      // pdf.setLineWidth(0.5); // Set line width as needed
+      // pdf.line(1, lineY, 500, lineY); // Adjust the width as needed
+
+      // // Move the Net Subtotal row down
+      // pdf.setY(lineY + 10); // Adjust the position as needed
+
       // Draw the Net Subtotal row
       pdf.autoTable({
         body: [totalRow],
         startY: lineY + 10,
         // ... (rest of the autoTable options remain the same)
       });
-  
+
     }
     // Hide the container again after capturing it for the PDF
     containerRef.current.style.display = 'none';
@@ -768,7 +789,7 @@ const CreateProject = () => {
                       </div>
                     ))
                   ) : (
-                    <p>No conference data available</p>
+                    <p></p>
                   )}
                 </div>
               </div>
@@ -823,6 +844,7 @@ const CreateProject = () => {
                         <th scope="col">Module</th>
                         <th scope="col">No Of Hours</th>
                         <th scope="col">Prize</th>
+
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
@@ -850,9 +872,9 @@ const CreateProject = () => {
                                       : ""}
                                   </td>
                                   <td>
-                                    ${" "}
-                                    {detail && detail.prize ? detail.prize : ""}
+                                  {detail && detail.prize ? `$${(parseFloat(detail.prize)).toFixed(2)}` : ''}
                                   </td>
+
                                   <td>
                                     <div className="icon-up-del justify-content-center">
                                       <Link

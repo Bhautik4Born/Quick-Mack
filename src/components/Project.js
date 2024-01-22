@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
@@ -28,6 +28,8 @@ const Project = () => {
                     <i className="fa-solid fa-plus"></i> Add New
                   </Link>
                 </div>
+
+                {/* WORK */}
                 <div className="search-project">
                   <div className="form-floating small-floating mb-3">
                     <input
